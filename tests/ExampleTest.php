@@ -1,5 +1,12 @@
 <?php
 
-it('can test', function () {
-    expect(true)->toBeTrue();
-});
+namespace Jpeters8889\Architect\Tests;
+
+class ExampleTest extends TestCase
+{
+    /** @test */
+    public function itIsTrue(): void
+    {
+        $this->assertTrue(true);
+    }
+}
