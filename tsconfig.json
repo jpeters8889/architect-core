@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "es2020",
+        "moduleResolution": "node",
+        "baseUrl": "./",
+        "strict": true,
+        "skipLibCheck": true,
+    },
+    "include": ["./resources/js/**/*.ts", "./resources/js/**/*.vue"],
+}

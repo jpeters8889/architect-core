@@ -1,0 +1,36 @@
+{
+    "root": true,
+    "env": {
+        "browser": true,
+        "es2021": true,
+        "node": true
+    },
+    "extends": [
+        "eslint:recommended",
+        "plugin:vue/vue3-essential",
+        "@vue/eslint-config-typescript",
+        "airbnb-base",
+        "airbnb-typescript/base"
+    ],
+    "parser": "vue-eslint-parser",
+    "parserOptions": {
+//        "ecmaVersion": 12,
+//        "sourceType": "module",
+//        "parser": "@typescript-eslint/parser",
+//        "project": "./tsconfig.json",
+//        "extraFileExtensions": [".vue"]
+
+        "project": "./tsconfig.json",
+        "ecmaVersion": 2021
+    },
+    "plugins": [
+        "@typescript-eslint",
+        "vue"
+    ],
+    "rules": {
+        "no-param-reassign": "off",
+        "vue/no-v-html": "off",
+        "class-methods-use-this": "off",
+        "vue/multi-word-component-names": "off"
+    }
+}
