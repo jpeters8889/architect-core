@@ -4,8 +4,8 @@ namespace Jpeters8889\Architect\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
-use Illuminate\Routing\Route;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Jpeters8889\Architect\ArchitectCoreServiceProvider;
 use Orchestra\Testbench\Factories\UserFactory;
 use Orchestra\Testbench\TestCase as Orchestra;
@@ -13,6 +13,8 @@ use Orchestra\Testbench\TestCase as Orchestra;
 class TestCase extends Orchestra
 {
     use LazilyRefreshDatabase;
+
+    protected bool $bootGate = true;
 
     protected function setUp(): void
     {
@@ -22,7 +24,9 @@ class TestCase extends Orchestra
 
         $this->withoutExceptionHandling();
 
-        Gate::define('accessArchitect', fn () => true);
+        if ($this->bootGate) {
+            Gate::define('accessArchitect', fn () => true);
+        }
 
         Factory::guessFactoryNamesUsing(
             fn (string $modelName) => 'Jpeters8889\\Architect\\Database\\Factories\\' . class_basename($modelName) . 'Factory'

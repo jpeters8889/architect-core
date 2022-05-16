@@ -1,6 +1,6 @@
 <?php
 
-namespace Jpeters8889\Architect\Http\Middleware;
+namespace Jpeters8889\Architect\Base\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -13,7 +13,7 @@ class HandleInertiaRequests extends Middleware
      * @see https://inertiajs.com/server-side-setup#root-template
      * @var string
      */
-    protected $rootView = 'architect';
+    protected $rootView = 'architect-core::architect';
 
     /**
      * Determines the current asset version.

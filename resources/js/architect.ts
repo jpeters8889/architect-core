@@ -3,8 +3,9 @@ import { createInertiaApp } from '@inertiajs/inertia-vue3';
 import { InertiaProgress } from '@inertiajs/progress';
 
 createInertiaApp({
-  id: 'architect',
-  resolve: (name) => import(`./Pages/${name}`),
+  // eslint-disable-next-line global-require,import/no-dynamic-require
+  resolve: (name) => require(`./Pages/${name}`),
+  title: () => 'Foo',
   setup({
     el, app, props, plugin,
   }) {

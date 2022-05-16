@@ -14,13 +14,13 @@ mix
             comments: false,
         },
     })
-    .webpackConfig({
-        output: {
-            chunkFilename: 'assets/js/[name].js?id=[chunkhash]',
-        },
-    })
+    // .webpackConfig({
+    //     output: {
+    //         chunkFilename: '[name].js?id=[chunkhash]',
+    //     },
+    // })
     .alias({
         '@': path.join(__dirname, 'resources/js'),
     })
-    .version()
+    // .version()
     .sourceMaps();

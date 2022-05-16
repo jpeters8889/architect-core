@@ -4,7 +4,7 @@ namespace Jpeters8889\Architect;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
-use Jpeters8889\Architect\Http\Middleware\HandleInertiaRequests;
+use Jpeters8889\Architect\Base\Http\Middleware\HandleInertiaRequests;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -14,7 +14,9 @@ class ArchitectCoreServiceProvider extends PackageServiceProvider
     {
         $package
             ->name('architect-core')
-            ->hasConfigFile();
+            ->hasConfigFile()
+            ->hasViews()
+            ->hasAssets();
     }
 
     public function packageBooted(): void
@@ -33,7 +35,7 @@ class ArchitectCoreServiceProvider extends PackageServiceProvider
     {
         Route::macro('architect', function (string $basePath = 'architect') {
             Route::prefix($basePath)
-                ->middleware(array_merge(config('architect.middleware'), [HandleInertiaRequests::class]))
+                ->middleware(array_merge(config('architect.middleware', []), [HandleInertiaRequests::class]))
                 ->group(__DIR__ . '/../routes/architect.php');
         });
 

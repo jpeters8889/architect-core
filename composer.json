@@ -1,5 +1,5 @@
 {
-    "name": "jpeters8889/architect-core",
+    "name": "jpeters/architect-core",
     "description": "Architect Core",
     "homepage": "https://github.com/jpeters8889/architect-core",
     "authors": [
@@ -13,7 +13,7 @@
         "php": "^8.1",
         "illuminate/contracts": "^9.0",
         "illuminate/support": "^9.12",
-        "inertiajs/inertia-laravel": "^0.6.0",
+        "inertiajs/inertia-laravel": "^0.6",
         "spatie/laravel-package-tools": "^1.9.2"
     },
     "require-dev": {
@@ -53,7 +53,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "ArchitectCoreServiceProvier"
+                "Jpeters8889\\Architect\\ArchitectCoreServiceProvider"
             ]
         }
     },
