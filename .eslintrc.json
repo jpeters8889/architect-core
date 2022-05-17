@@ -2,15 +2,14 @@
     "root": true,
     "env": {
         "browser": true,
-        "es2021": true,
-        "node": true
+        "es2021": true
     },
     "extends": [
         "eslint:recommended",
-        "plugin:vue/vue3-essential",
         "@vue/eslint-config-typescript",
         "airbnb-base",
-        "airbnb-typescript/base"
+        "airbnb-typescript/base",
+        "plugin:vue/vue3-recommended"
     ],
     "parser": "vue-eslint-parser",
     "parserOptions": {
@@ -28,9 +27,37 @@
         "vue"
     ],
     "rules": {
+        "indent": [
+            "error",
+            2,
+            {
+                "SwitchCase": 1
+            }
+        ],
+        "quotes": [
+            "error",
+            "single"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
         "no-param-reassign": "off",
         "vue/no-v-html": "off",
         "class-methods-use-this": "off",
-        "vue/multi-word-component-names": "off"
+        "vue/multi-word-component-names": "off",
+        "vue/max-len": [
+            "error",
+            {
+                "code": 140,
+                "ignoreStrings": true,
+                "ignoreRegExpLiterals": true,
+                "ignoreComments": true,
+                "ignoreTrailingComments": true,
+                "ignoreTemplateLiterals": true,
+                "ignoreHTMLAttributeValues": true,
+                "ignoreHTMLTextContents": true
+            }
+        ]
     }
 }
