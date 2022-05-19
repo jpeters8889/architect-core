@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Jpeters8889\Architect\ArchitectCoreServiceProvider;
+use Jpeters8889\Architect\Tests\AppClasses\ArchitectAppServiceProvider;
 use Orchestra\Testbench\Factories\UserFactory;
 use Orchestra\Testbench\TestCase as Orchestra;
 
@@ -37,6 +38,7 @@ class TestCase extends Orchestra
     {
         return [
             ArchitectCoreServiceProvider::class,
+            ArchitectAppServiceProvider::class,
         ];
     }
 

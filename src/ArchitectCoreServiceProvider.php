@@ -8,7 +8,7 @@ use Jpeters8889\Architect\Base\Http\Middleware\HandleInertiaRequests;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
-class ArchitectCoreServiceProvider extends PackageServiceProvider
+final class ArchitectCoreServiceProvider extends PackageServiceProvider
 {
     public function configurePackage(Package $package): void
     {
@@ -34,8 +34,11 @@ class ArchitectCoreServiceProvider extends PackageServiceProvider
     protected function bootRoutes(): self
     {
         Route::macro('architect', function (string $basePath = 'architect') {
+            /** @var array $baseMiddleware */
+            $baseMiddleware = config('architect.middleware', []);
+
             Route::prefix($basePath)
-                ->middleware(array_merge(config('architect.middleware', []), [HandleInertiaRequests::class]))
+                ->middleware(array_merge($baseMiddleware, [HandleInertiaRequests::class]))
                 ->group(__DIR__ . '/../routes/architect.php');
         });
 

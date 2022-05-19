@@ -1,49 +1,66 @@
 <template>
-  <div
+  <Menu
+    as="div"
     :class="wrapperClasses"
-    @click="toggle = !toggle"
-    @mouseleave="toggle = false"
   >
-    <slot name="icon" />
+    <MenuButton>
+      <slot name="icon" />
+    </MenuButton>
 
-    <div
-      v-if="toggle"
-      class="absolute left-full top-0 min-h-10 w-auto"
+    <transition
+      enter-active-class="transition duration-100 ease-out"
+      enter-from-class="transform scale-95 opacity-0"
+      enter-to-class="transform scale-100 opacity-100"
+      leave-active-class="transition duration-75 ease-in"
+      leave-from-class="transform scale-100 opacity-100"
+      leave-to-class="transform scale-95 opacity-0"
     >
-      <ul class="divide-y divide-gray-400 bg-gray-700 max-w-[300px] min-w-[200px] ml-0">
-        <li
-          v-for="link in links"
-          :key="link.label"
-          class="transition hover:bg-gray-600"
-        >
-          <Link
-            class="block p-2 flex items-center"
-            :href="link.path"
+      <MenuItems
+        class="absolute left-full top-0 min-h-10 w-auto"
+      >
+        <ul class="divide-y divide-gray-400 bg-gray-700 max-w-[300px] min-w-[200px] ml-2">
+          <MenuItem
+            v-for="link in links"
+            :key="link.label"
           >
-            <div class="mr-2">
-              <component
-                :is="linkIcon(link.icon)"
-                class="w-6 h-6"
-              />
-            </div>
-            <span class="block flex-1">{{ link.label }}</span>
-          </Link>
-        </li>
-      </ul>
-    </div>
-  </div>
+            <li class="transition hover:bg-gray-600">
+              <Link
+                class="block p-2 flex items-center"
+                :href="link.path"
+              >
+                <div class="mr-2">
+                  <component
+                    :is="linkIcon(link.icon)"
+                    class="w-6 h-6"
+                  />
+                </div>
+                <span class="block flex-1">{{ link.label }}</span>
+              </Link>
+            </li>
+          </MenuItem>
+        </ul>
+      </MenuItems>
+    </transition>
+  </Menu>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Link } from '@inertiajs/inertia-vue3';
 import { ChartSquareBarIcon } from '@heroicons/vue/outline';
+import {
+  Menu, MenuButton, MenuItems, MenuItem,
+} from '@headlessui/vue';
 import { NavigationChild } from '../../types';
 
 export default defineComponent({
   components: {
     Link,
     ChartSquareBarIcon,
+    Menu,
+    MenuButton,
+    MenuItems,
+    MenuItem,
   },
 
   props: {
@@ -53,15 +70,11 @@ export default defineComponent({
     },
   },
 
-  data: () => ({
-    toggle: false,
-  }),
-
   computed: {
     wrapperClasses(): string[] {
       return [
         'bg-gray-800',
-        this.toggle ? 'rounded-l' : 'rounded',
+        'rounded',
         'w-10',
         'h-10',
         'border',
