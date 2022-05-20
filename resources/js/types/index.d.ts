@@ -1,5 +1,9 @@
+export type Navigation = {
+  dashboards: NavigationChild[];
+};
+
 export type NavigationChild = {
   label: string;
-  path: string;
+  slug: string;
   icon: 'chart';
 };

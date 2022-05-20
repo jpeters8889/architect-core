@@ -3,8 +3,8 @@
 namespace Jpeters8889\Architect\Tests\Unit\Base;
 
 use Jpeters8889\Architect\ArchitectCore;
-use Jpeters8889\Architect\Modules\Dashboards\AppDashboard;
 use Jpeters8889\Architect\Modules\Dashboards\Manager as DashboardManager;
+use Jpeters8889\Architect\Tests\AppClasses\TestDashboard;
 use Jpeters8889\Architect\Tests\TestCase;
 
 class ArchitectServiceProviderTest extends TestCase
@@ -35,6 +35,6 @@ class ArchitectServiceProviderTest extends TestCase
 
         $this->assertCount(1, $dashboardManager->getDashboards());
 
-        $this->assertEquals(AppDashboard::class, $dashboardManager->getDashboards()->first());
+        $this->assertEquals(TestDashboard::class, $dashboardManager->getDashboards()->first());
     }
 }

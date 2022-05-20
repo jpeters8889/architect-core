@@ -14,7 +14,7 @@
 import { defineComponent } from 'vue';
 import { HomeIcon } from '@heroicons/vue/outline';
 import NavGroup from '../Navigation/NavGroup.vue';
-import { NavigationChild } from '../../types';
+import { Navigation, NavigationChild } from '../../types';
 
 export default defineComponent({
   components: {
@@ -22,13 +22,16 @@ export default defineComponent({
     HomeIcon,
   },
 
+  props: {
+    navigation: {
+      required: true,
+      type: Object as () => Navigation,
+    },
+  },
+
   computed: {
     homeLinks(): NavigationChild[] {
-      return [
-        { label: 'My Dashboard', path: '/', icon: 'chart' },
-        { label: 'Shop', path: '/', icon: 'chart' },
-        { label: 'Mailcoach', path: '/', icon: 'chart' },
-      ];
+      return this.navigation.dashboards;
     },
   },
 });

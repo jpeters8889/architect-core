@@ -4,6 +4,7 @@ namespace Jpeters8889\Architect\Base\Http\Middleware;
 
 use Illuminate\Http\Request;
 use Inertia\Middleware;
+use Jpeters8889\Architect\Modules\Navigation\NavigationResolver;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -37,7 +38,12 @@ class HandleInertiaRequests extends Middleware
     public function share(Request $request): array
     {
         return array_merge(parent::share($request), [
-            //
+            'navigation' => $this->navigation(),
         ]);
+    }
+
+    protected function navigation(): array
+    {
+        return resolve(NavigationResolver::class)->build();
     }
 }
