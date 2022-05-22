@@ -3,8 +3,21 @@
     as="div"
     :class="wrapperClasses"
   >
-    <MenuButton>
-      <slot name="icon" />
+    <MenuButton
+      class="w-full flex items-center justify-center"
+      :class="isExpanded ? 'xl:bg-gray-800 xl:justify-start' : ''"
+      :as="isExpanded ? 'div' : 'button'"
+    >
+      <span :class="isExpanded ? 'xl:p-2' : ''">
+        <slot name="icon" />
+      </span>
+
+      <span
+        v-if="isExpanded"
+        class="text-left text-xl xl:block xl:ml-2 xl:flex-1"
+      >
+        Dashboards
+      </span>
     </MenuButton>
 
     <transition
@@ -17,8 +30,13 @@
     >
       <MenuItems
         class="absolute left-full top-0 min-h-10 w-auto"
+        :class="isExpanded ? 'xl:relative xl:left-auto xl:w-full' : ''"
+        :static="isExpanded"
       >
-        <ul class="divide-y divide-gray-400 bg-gray-700 max-w-[300px] min-w-[200px] ml-2">
+        <ul
+          class="divide-y divide-gray-400 bg-gray-700 max-w-[300px] min-w-[200px] ml-2"
+          :class="isExpanded ? 'xl:w-full xl:ml-0' : ''"
+        >
           <MenuItem
             v-for="link in links"
             :key="link.label"
@@ -26,9 +44,12 @@
             <li class="transition hover:bg-gray-600">
               <Link
                 class="block p-2 flex items-center"
-                :href="link.path"
+                :href="link.slug"
               >
-                <div class="mr-2">
+                <div
+                  class="mr-2"
+                  :class="isExpanded ? 'xl:mr-6' : ''"
+                >
                   <component
                     :is="linkIcon(link.icon)"
                     class="w-6 h-6"
@@ -52,6 +73,7 @@ import {
   Menu, MenuButton, MenuItems, MenuItem,
 } from '@headlessui/vue';
 import { NavigationChild } from '../../types';
+import ResponsiveOptions from '../../Mixins/ResponsiveOptions';
 
 export default defineComponent({
   components: {
@@ -63,7 +85,13 @@ export default defineComponent({
     MenuItem,
   },
 
+  mixins: [ResponsiveOptions],
+
   props: {
+    expanded: {
+      required: true,
+      type: Boolean,
+    },
     links: {
       required: true,
       type: Array as () => NavigationChild[],
@@ -71,8 +99,16 @@ export default defineComponent({
   },
 
   computed: {
+    isExpanded(): boolean {
+      if (this.isLt('xl')) {
+        return false;
+      }
+
+      return this.expanded;
+    },
+
     wrapperClasses(): string[] {
-      return [
+      const classes: string[] = [
         'bg-gray-800',
         'rounded',
         'w-10',
@@ -88,6 +124,17 @@ export default defineComponent({
         'transition',
         'relative',
       ];
+
+      if (this.isExpanded) {
+        classes.push(
+          'xl:w-full',
+          'xl:text-gray-200',
+          'xl:flex-col',
+          'xl:h-auto',
+        );
+      }
+
+      return classes;
     },
   },
 
