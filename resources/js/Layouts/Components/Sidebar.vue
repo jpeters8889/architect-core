@@ -1,16 +1,32 @@
 <template>
   <div
-    class="flex-1 flex-grow-0 w-14 bg-gray-900 px-2 transition-[width]"
+    class="flex-1 flex-grow-0 w-14 bg-gray-900 px-2 transition-[width] space-y-5"
     :class="displayNav ? 'xl:min-w-[300px]' : ''"
   >
-    <div class="h-10 mb-2" />
+    <div class="h-10 !mb-0" />
 
     <NavGroup
-      :links="homeLinks"
+      :links="navigation.dashboards"
       :expanded="displayNav"
+      label="Dashboards"
+      child-icon="chart"
+      class="!mt-0"
     >
       <template #icon>
         <HomeIcon class="w-8 h-8" />
+      </template>
+    </NavGroup>
+
+    <NavGroup
+      v-for="group in navigation.blueprints"
+      :key="group.label"
+      :links="group.blueprints"
+      :expanded="displayNav"
+      :label="group.label"
+      child-icon="collection"
+    >
+      <template #icon>
+        <OfficeBuildingIcon class="w-8 h-8" />
       </template>
     </NavGroup>
   </div>
@@ -18,14 +34,15 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { HomeIcon } from '@heroicons/vue/outline';
+import { HomeIcon, OfficeBuildingIcon } from '@heroicons/vue/outline';
 import NavGroup from '../Navigation/NavGroup.vue';
-import { Navigation, NavigationChild } from '../../types';
+import { Navigation } from '../../types';
 
 export default defineComponent({
   components: {
     NavGroup,
     HomeIcon,
+    OfficeBuildingIcon,
   },
 
   props: {
@@ -36,12 +53,6 @@ export default defineComponent({
     displayNav: {
       required: true,
       type: Boolean,
-    },
-  },
-
-  computed: {
-    homeLinks(): NavigationChild[] {
-      return this.navigation.dashboards;
     },
   },
 });

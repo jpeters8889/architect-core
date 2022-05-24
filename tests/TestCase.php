@@ -53,4 +53,9 @@ class TestCase extends Orchestra
 
         $this->actingAs($user, $guard);
     }
+
+    protected function defineDatabaseMigrations()
+    {
+        $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
+    }
 }

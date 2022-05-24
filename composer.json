@@ -14,6 +14,7 @@
         "illuminate/contracts": "^9.0",
         "illuminate/support": "^9.12",
         "inertiajs/inertia-laravel": "^0.6",
+        "spatie/data-transfer-object": "^3.7",
         "spatie/laravel-package-tools": "^1.9.2"
     },
     "require-dev": {

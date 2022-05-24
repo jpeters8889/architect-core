@@ -2,22 +2,11 @@
 
 namespace Jpeters8889\Architect\Modules\Dashboards;
 
-use Illuminate\Support\Str;
+use Jpeters8889\Architect\Shared\Contracts\Registerable;
+use Jpeters8889\Architect\Shared\Traits\DisplaysOnNavigation;
 
-abstract class AbstractDashboard
+/** @implements Registerable<AbstractDashboard> */
+abstract class AbstractDashboard implements Registerable
 {
-    public function label(): string
-    {
-        return Str::of(class_basename(static::class))
-            ->headline()
-            ->toString();
-    }
-
-    public function slug(): string
-    {
-        return Str::of(class_basename(static::class))
-            ->snake()
-            ->slug()
-            ->toString();
-    }
+    use DisplaysOnNavigation;
 }

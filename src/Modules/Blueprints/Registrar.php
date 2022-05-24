@@ -1,0 +1,31 @@
+<?php
+
+namespace Jpeters8889\Architect\Modules\Blueprints;
+
+use Illuminate\Support\Collection;
+use Jpeters8889\Architect\Shared\Contracts\Registerable;
+use Jpeters8889\Architect\Shared\Contracts\RegistrarContract;
+
+/** @implements RegistrarContract<AbstractBlueprint> */
+class Registrar implements RegistrarContract
+{
+    /** @var Collection<int, class-string<Registerable<AbstractBlueprint>>> */
+    protected Collection $blueprints;
+
+    public function __construct()
+    {
+        $this->blueprints = new Collection([]);
+    }
+
+    /** @param class-string<AbstractBlueprint> $item */
+    public function register(string $item): void
+    {
+        $this->blueprints->push($item);
+    }
+
+    /** @return Collection<int, class-string<Registerable<AbstractBlueprint>>> */
+    public function all(): Collection
+    {
+        return $this->blueprints;
+    }
+}

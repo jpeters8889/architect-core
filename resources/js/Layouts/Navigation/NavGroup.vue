@@ -13,10 +13,10 @@
       </span>
 
       <span
-        v-if="isExpanded"
+        v-if="isExpanded && label"
         class="text-left text-xl xl:block xl:ml-2 xl:flex-1"
       >
-        Dashboards
+        {{ label }}
       </span>
     </MenuButton>
 
@@ -51,7 +51,7 @@
                   :class="isExpanded ? 'xl:mr-6' : ''"
                 >
                   <component
-                    :is="linkIcon(link.icon)"
+                    :is="linkIcon()"
                     class="w-6 h-6"
                   />
                 </div>
@@ -68,7 +68,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Link } from '@inertiajs/inertia-vue3';
-import { ChartSquareBarIcon } from '@heroicons/vue/outline';
+import { ChartSquareBarIcon, OfficeBuildingIcon, CollectionIcon } from '@heroicons/vue/outline';
 import {
   Menu, MenuButton, MenuItems, MenuItem,
 } from '@headlessui/vue';
@@ -83,6 +83,8 @@ export default defineComponent({
     MenuButton,
     MenuItems,
     MenuItem,
+    OfficeBuildingIcon,
+    CollectionIcon,
   },
 
   mixins: [ResponsiveOptions],
@@ -95,6 +97,14 @@ export default defineComponent({
     links: {
       required: true,
       type: Array as () => NavigationChild[],
+    },
+    childIcon: {
+      required: true,
+      type: String,
+    },
+    label: {
+      required: false,
+      type: String,
     },
   },
 
@@ -139,10 +149,14 @@ export default defineComponent({
   },
 
   methods: {
-    linkIcon(icon: string): string {
-      switch (icon) {
+    linkIcon(): string {
+      switch (this.childIcon) {
         case 'chart':
           return 'ChartSquareBarIcon';
+        case 'building':
+          return 'OfficeBuildingIcon';
+        case 'collection':
+          return 'CollectionIcon';
         default:
               //
       }

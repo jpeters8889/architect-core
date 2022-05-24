@@ -4,8 +4,10 @@ namespace Jpeters8889\Architect\Base\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Jpeters8889\Architect\ArchitectCore;
+use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
+use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
 use Jpeters8889\Architect\Modules\Dashboards\AbstractDashboard;
-use Jpeters8889\Architect\Modules\Dashboards\Manager as DashboardManager;
+use Jpeters8889\Architect\Modules\Dashboards\Registrar as DashboardRegistrar;
 
 abstract class ArchitectAppServiceProvider extends ServiceProvider
 {
@@ -16,13 +18,16 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
 
     protected function bootstrapArchitect(): void
     {
-        $dashboardManager = new DashboardManager();
+        $dashboardRegistrar = new DashboardRegistrar();
+        $blueprintRegistrar = new BlueprintRegistrar();
 
-        collect($this->dashboards())->each(fn ($dashboard) => $dashboardManager->registerDashboard($dashboard));
+        collect($this->dashboards())->each(fn ($dashboard) => $dashboardRegistrar->register($dashboard));
+        collect($this->blueprints())->each(fn ($blueprint) => $blueprintRegistrar->register($blueprint));
 
-        $architect = new ArchitectCore($dashboardManager);
+        $architect = new ArchitectCore($dashboardRegistrar, $blueprintRegistrar);
 
-        $this->app->singleton(DashboardManager::class, fn () => $dashboardManager);
+        $this->app->singleton(DashboardRegistrar::class, fn () => $dashboardRegistrar);
+        $this->app->singleton(BlueprintRegistrar::class, fn () => $blueprintRegistrar);
         $this->app->singleton(ArchitectCore::class, fn () => $architect);
     }
 
@@ -30,4 +35,9 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
      * @return class-string<AbstractDashboard>[]
      */
     abstract protected function dashboards(): array;
+
+    /**
+     * @return class-string<AbstractBlueprint>[]
+     */
+    abstract protected function blueprints(): array;
 }

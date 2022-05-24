@@ -2,6 +2,7 @@
 
 namespace Jpeters8889\Architect\Tests\Unit\Modules\Navigation;
 
+use Illuminate\Support\Collection;
 use Jpeters8889\Architect\Modules\Navigation\NavigationResolver;
 use Jpeters8889\Architect\Tests\TestCase;
 
@@ -33,9 +34,55 @@ class NavigationResolverTest extends TestCase
         $dashboards = $navigation['dashboards'];
 
         foreach ($dashboards as $dashboard) {
+            $dashboard = $dashboard->toArray();
+
             $this->assertArrayHasKey('label', $dashboard);
             $this->assertArrayHasKey('slug', $dashboard);
-            $this->assertArrayHasKey('icon', $dashboard);
         }
+    }
+
+    /** @test */
+    public function itReturnsTheBlueprintsOrderedByGroup(): void
+    {
+        $navigation = $this->navigationResolver->build();
+
+        $group = $navigation['blueprints']->first();
+
+        $this->assertArrayHasKey('label', $group);
+        $this->assertNotNull($group['label']);
+        $this->assertEquals('Blueprints', $group['label']);
+
+        $this->assertArrayHasKey('blueprints', $group);
+        $this->assertNotNull($group['blueprints']);
+        $this->assertInstanceOf(Collection::class, $group['blueprints']);
+    }
+
+    /** @test */
+    public function itFormatsTheBlueprints(): void
+    {
+        $navigation = $this->navigationResolver->build();
+
+        $blueprints = $navigation['blueprints'];
+
+        $blueprints->each(function ($group) {
+            $group['blueprints']->each(function ($blueprint) {
+                $blueprint = $blueprint->toArray();
+
+                $this->assertArrayHasKey('label', $blueprint);
+                $this->assertArrayHasKey('slug', $blueprint);
+            });
+        });
+    }
+
+    /** @test */
+    public function itReturnsTheBlueprintInGroups(): void
+    {
+        $navigation = $this->navigationResolver->build();
+
+        $firstGroup = $navigation['blueprints']->first();
+        $secondGroup = $navigation['blueprints']->skip(1)->first();
+
+        $this->assertEquals('Blueprints', $firstGroup['label']);
+        $this->assertEquals('Blogs', $secondGroup['label']);
     }
 }

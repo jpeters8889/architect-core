@@ -8,10 +8,10 @@ export type Breakpoint = { from: number, to: number };
 
 export type Navigation = {
   dashboards: NavigationChild[];
+  blueprints: { label: string, blueprints: NavigationChild[] }[];
 };
 
 export type NavigationChild = {
   label: string;
   slug: string;
-  icon: 'chart';
 };

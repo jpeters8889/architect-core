@@ -12,4 +12,12 @@ class ArchitectAppServiceProvider extends BaseServiceProvider
             TestDashboard::class,
         ];
     }
+
+    protected function blueprints(): array
+    {
+        return [
+            UserBlueprint::class,
+            BlogBlueprint::class,
+        ];
+    }
 }
