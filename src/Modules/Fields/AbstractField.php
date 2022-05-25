@@ -12,10 +12,12 @@ abstract class AbstractField
 
     protected ?Closure $tableGetter = null;
 
+    protected ?Closure $formGetter = null;
+
     final public function __construct(protected string $column, string $label = null)
     {
         if (! $label) {
-            $label = Str::of($this->column)->headline();
+            $label = Str::of($this->column)->headline()->toString();
         }
 
         $this->label = $label;
@@ -44,16 +46,33 @@ abstract class AbstractField
     public function getCurrentValueForTable(Model $model): mixed
     {
         if ($this->tableGetter) {
-            return call_user_func($this->tableGetter, $model, $this->column);
+            return call_user_func($this->tableGetter, $model);
         }
 
         return $this->getCurrentValue($model);
     }
 
-    /** @phpstan-param Closure(Model $model, string $column): mixed $getter */
+    public function getCurrentValueForForm(Model $model): mixed
+    {
+        if ($this->formGetter) {
+            return call_user_func($this->formGetter, $model);
+        }
+
+        return $this->getCurrentValue($model);
+    }
+
+    /** @phpstan-param Closure(Model $model): mixed $getter */
     public function getValueForTableUsing(Closure $getter): static
     {
         $this->tableGetter = $getter;
+
+        return $this;
+    }
+
+    /** @phpstan-param Closure(Model $model): mixed $getter */
+    public function getValueForFormsUsing(Closure $getter): static
+    {
+        $this->formGetter = $getter;
 
         return $this;
     }

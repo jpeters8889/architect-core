@@ -3,6 +3,7 @@
 namespace Jpeters8889\Architect\Modules\Dashboards;
 
 use Illuminate\Support\Collection;
+use Jpeters8889\Architect\Modules\Dashboards\Exceptions\DashboardNotFoundException;
 use Jpeters8889\Architect\Shared\Contracts\Registerable;
 use Jpeters8889\Architect\Shared\Contracts\RegistrarContract;
 
@@ -27,5 +28,18 @@ class Registrar implements RegistrarContract
     public function all(): Collection
     {
         return $this->dashboards;
+    }
+
+    public function resolveFromSlug(string $slug): AbstractDashboard
+    {
+        $blueprint = $this->all()
+            ->map(fn ($dashboard) => new $dashboard())
+            ->map(fn (AbstractDashboard $dashboard) => $dashboard->slug())
+            ->filter(fn ($dashboardSlug) => $dashboardSlug === $slug)
+            ->first();
+
+        throw_if(! $blueprint, DashboardNotFoundException::fromSlug($slug));
+
+        return $blueprint;
     }
 }

@@ -49,8 +49,27 @@ abstract class FieldTestCase extends TestCase
     {
         $user = UserFactory::new()->create(['username' => 'FooBar']);
         $field = $this->makeField('username')
-            ->getValueForTableUsing(fn (Model $model, string $column) => "{$model->{$column}} Appended");
+            ->getValueForTableUsing(fn (Model $model) => "{$model->username} Appended");
 
         $this->assertEquals('FooBar Appended', $field->getCurrentValueForTable($user));
+    }
+
+    /** @test */
+    public function itCanGetTheCurrentValueForDisplayOnForms(): void
+    {
+        $user = UserFactory::new()->create(['username' => 'FooBar']);
+        $field = $this->makeField('username');
+
+        $this->assertEquals('FooBar', $field->getCurrentValueForForm($user));
+    }
+
+    /** @test */
+    public function itCanGetTHeValueForDisplayOnFormsWithItsOwnGetter(): void
+    {
+        $user = UserFactory::new()->create(['username' => 'FooBar']);
+        $field = $this->makeField('username')
+            ->getValueForFormsUsing(fn (Model $model) => "{$model->username} Appended");
+
+        $this->assertEquals('FooBar Appended', $field->getCurrentValueForForm($user));
     }
 }

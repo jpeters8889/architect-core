@@ -2,7 +2,9 @@
 
 namespace Jpeters8889\Architect\Tests\Unit\Base;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Jpeters8889\Architect\ArchitectCore;
+use Jpeters8889\Architect\Modules\Blueprints\ListService;
 use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
 use Jpeters8889\Architect\Modules\Dashboards\Registrar as DashboardRegistrar;
 use Jpeters8889\Architect\Tests\AppClasses\TestDashboard;
@@ -58,5 +60,13 @@ class ArchitectServiceProviderTest extends TestCase
         $this->assertNotEmpty($blueprintRegistrar->all());
 
         $this->assertEquals(UserBlueprint::class, $blueprintRegistrar->all()->first());
+    }
+
+    /** @test */
+    public function itErrorsWhenTryingToGetABlueprintListServiceWhenNotOnABlueprintUrl(): void
+    {
+        $this->expectException(BindingResolutionException::class);
+
+        resolve(ListService::class);
     }
 }

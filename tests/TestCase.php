@@ -58,4 +58,10 @@ class TestCase extends Orchestra
     {
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
     }
+
+    public function refreshServiceProvider()
+    {
+        app(ArchitectAppServiceProvider::class, ['app' => $this->app])
+            ->boot();
+    }
 }
