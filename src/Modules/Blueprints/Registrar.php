@@ -3,13 +3,12 @@
 namespace Jpeters8889\Architect\Modules\Blueprints;
 
 use Illuminate\Support\Collection;
-use Jpeters8889\Architect\Shared\Contracts\Registerable;
 use Jpeters8889\Architect\Shared\Contracts\RegistrarContract;
 
 /** @implements RegistrarContract<AbstractBlueprint> */
 class Registrar implements RegistrarContract
 {
-    /** @var Collection<int, class-string<Registerable<AbstractBlueprint>>> */
+    /** @var Collection<int, class-string<AbstractBlueprint>> */
     protected Collection $blueprints;
 
     public function __construct()
@@ -23,7 +22,7 @@ class Registrar implements RegistrarContract
         $this->blueprints->push($item);
     }
 
-    /** @return Collection<int, class-string<Registerable<AbstractBlueprint>>> */
+    /** @return Collection<int, class-string<AbstractBlueprint>> */
     public function all(): Collection
     {
         return $this->blueprints;

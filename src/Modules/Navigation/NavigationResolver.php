@@ -8,7 +8,6 @@ use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
 use Jpeters8889\Architect\Modules\Dashboards\AbstractDashboard;
 use Jpeters8889\Architect\Modules\Dashboards\Registrar as DashboardRegistrar;
 use Jpeters8889\Architect\Modules\Navigation\DTO\NavigationItem;
-use Jpeters8889\Architect\Shared\Contracts\Registerable;
 
 class NavigationResolver
 {
@@ -20,7 +19,10 @@ class NavigationResolver
     }
 
     /**
-     * @return array{dashboards: Collection<int, NavigationItem>, blueprints: Collection<int, NavigationItem>}
+     * @return array{
+     *     dashboards: Collection<int, NavigationItem>,
+     *     blueprints: Collection<(int|string), array{label: string, blueprints: Collection<(int|string), NavigationItem>}>
+     * }
      */
     public function build(): array
     {
@@ -46,18 +48,13 @@ class NavigationResolver
     }
 
     /**
-     * @return Collection{int, label: string, blueprints: Collection<int, NavigationItem>}
+     * @return Collection<(int|string), array{label: string, blueprints: Collection<(int|string), NavigationItem>}>
      */
     protected function processBlueprints(): Collection
     {
         return $this->blueprintRegistrar
             ->all()
-            ->map(
-            /**
-             * @phpstan-return Registerable<AbstractBlueprint>
-             */
-                fn (string $blueprintClass): AbstractBlueprint => new $blueprintClass()
-            )
+            ->map(fn (string $blueprintClass): AbstractBlueprint => new $blueprintClass())
             ->groupBy(fn (AbstractBlueprint $blueprint) => $blueprint->group())
             ->map(fn (Collection $blueprints, string $label) => [
                 'label' => $label,
@@ -68,7 +65,7 @@ class NavigationResolver
             ]);
     }
 
-    protected function navigationItem($label, $slug): NavigationItem
+    protected function navigationItem(string $label, string $slug): NavigationItem
     {
         return new NavigationItem(label: $label, slug: $slug);
     }

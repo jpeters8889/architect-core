@@ -7,9 +7,8 @@ use Illuminate\Support\Collection;
 /** @template TType */
 interface RegistrarContract
 {
-    /** @param class-string<Registerable<TType>> $item */
     public function register(string $item): void;
 
-    /** @return Collection<int, class-string<Registerable<TType>>> */
+    /** @phpstan-ignore-next-line */
     public function all(): Collection;
 }
