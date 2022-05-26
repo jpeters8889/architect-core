@@ -36,6 +36,7 @@ final class ArchitectCoreServiceProvider extends PackageServiceProvider
         Route::macro('architect', function (string $basePath = 'architect') {
             /** @var array $baseMiddleware */
             $baseMiddleware = config('architect.middleware', []);
+            config(['architect.base_path' => $basePath]);
 
             Route::prefix($basePath)
                 ->middleware(array_merge($baseMiddleware, [HandleInertiaRequests::class]))

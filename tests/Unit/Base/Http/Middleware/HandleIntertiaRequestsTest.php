@@ -18,4 +18,15 @@ class HandleIntertiaRequestsTest extends TestCase
         $this->assertArrayHasKey('navigation', $sharedData);
         $this->assertEquals(resolve(NavigationResolver::class)->build(), $sharedData['navigation']);
     }
+
+    /** @test */
+    public function itHasTheLinkRootInTheSharedObject(): void
+    {
+        $middleware = resolve(HandleInertiaRequests::class);
+
+        $sharedData = $middleware->share(request());
+
+        $this->assertArrayHasKey('basePath', $sharedData);
+        $this->assertEquals('architect', $sharedData['basePath']);
+    }
 }

@@ -41,10 +41,13 @@
             v-for="link in links"
             :key="link.label"
           >
-            <li class="transition hover:bg-gray-600">
+            <li
+              class="transition"
+              :class="$page.url === absoluteLink(link.slug) ? 'bg-gray-500' : 'hover:bg-gray-600'"
+            >
               <Link
                 class="block p-2 flex items-center"
-                :href="link.slug"
+                :href="absoluteLink(link.slug)"
               >
                 <div
                   class="mr-2"
@@ -105,6 +108,12 @@ export default defineComponent({
     label: {
       required: false,
       type: String,
+      default: null,
+    },
+    basePath: {
+      required: false,
+      type: String,
+      default: '/',
     },
   },
 
@@ -162,6 +171,26 @@ export default defineComponent({
       }
 
       throw new Error('Unknown Icon');
+    },
+
+    absoluteLink(uri: string) {
+      const basePath = (): string => {
+        if (!this.basePath || this.basePath === '/') {
+          return '/';
+        }
+
+        if (this.basePath.slice(-1) === '/') {
+          return this.basePath.substring(0, this.basePath.length - 1);
+        }
+
+        if (this.basePath[0] !== '/') {
+          return `/${this.basePath}`;
+        }
+
+        return this.basePath;
+      };
+
+      return `${basePath()}/${uri}`;
     },
   },
 });

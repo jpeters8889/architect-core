@@ -3,6 +3,7 @@
     <Sidebar
       :navigation="navigation"
       :display-nav="displayNav"
+      :base-path="basePath"
     />
 
     <div class="w-full flex-1 flex flex-col">
@@ -43,11 +44,9 @@ export default defineComponent({
       required: true,
       type: Object as () => Navigation,
     },
-  },
-
-  methods: {
-    toggleNav() {
-      alert('toggled');
+    basePath: {
+      required: true,
+      type: String,
     },
   },
 });

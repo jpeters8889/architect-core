@@ -12,5 +12,6 @@ interface RegistrarContract
     /** @phpstan-ignore-next-line */
     public function all(): Collection;
 
+    /** @phpstan-ignore-next-line */
     public function resolveFromSlug(string $slug): Registerable;
 }

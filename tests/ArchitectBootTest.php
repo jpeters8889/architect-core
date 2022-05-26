@@ -25,6 +25,14 @@ class ArchitectBootTest extends TestCase
     }
 
     /** @test */
+    public function itStoresTheBasePathInTheConfig(): void
+    {
+        $this->assertArrayHasKey('base_path', config('architect'));
+
+        $this->assertEquals('architect', config('architect.base_path'));
+    }
+
+    /** @test */
     public function itAppliesTheInertiaMiddleware(): void
     {
         $routes = collect(Route::getRoutes()->getRoutes());

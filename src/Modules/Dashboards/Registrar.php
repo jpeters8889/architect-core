@@ -4,13 +4,12 @@ namespace Jpeters8889\Architect\Modules\Dashboards;
 
 use Illuminate\Support\Collection;
 use Jpeters8889\Architect\Modules\Dashboards\Exceptions\DashboardNotFoundException;
-use Jpeters8889\Architect\Shared\Contracts\Registerable;
 use Jpeters8889\Architect\Shared\Contracts\RegistrarContract;
 
 /** @implements RegistrarContract<AbstractDashboard> */
 class Registrar implements RegistrarContract
 {
-    /** @var Collection<int, class-string<Registerable<AbstractDashboard>>> */
+    /** @var Collection<int, class-string<AbstractDashboard>> */
     protected Collection $dashboards;
 
     public function __construct()
@@ -24,7 +23,7 @@ class Registrar implements RegistrarContract
         $this->dashboards->push($item);
     }
 
-    /** @return Collection<int, class-string<Registerable<AbstractDashboard>>> */
+    /** @return Collection<int, class-string<AbstractDashboard>> */
     public function all(): Collection
     {
         return $this->dashboards;
@@ -32,14 +31,13 @@ class Registrar implements RegistrarContract
 
     public function resolveFromSlug(string $slug): AbstractDashboard
     {
-        $blueprint = $this->all()
-            ->map(fn ($dashboard) => new $dashboard())
-            ->map(fn (AbstractDashboard $dashboard) => $dashboard->slug())
-            ->filter(fn ($dashboardSlug) => $dashboardSlug === $slug)
+        $dashboard = $this->all()
+            ->map(fn ($dashboard): AbstractDashboard => new $dashboard())
+            ->filter(fn (AbstractDashboard $dashboard): bool => $dashboard->slug() === $slug)
             ->first();
 
-        throw_if(! $blueprint, DashboardNotFoundException::fromSlug($slug));
+        throw_if(! $dashboard, DashboardNotFoundException::fromSlug($slug));
 
-        return $blueprint;
+        return $dashboard;
     }
 }

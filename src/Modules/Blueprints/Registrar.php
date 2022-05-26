@@ -32,8 +32,8 @@ class Registrar implements RegistrarContract
     public function resolveFromSlug(string $slug): AbstractBlueprint
     {
         $blueprint = $this->all()
-            ->map(fn ($blueprint) => new $blueprint())
-            ->filter(fn (AbstractBlueprint $blueprint) => $blueprint->slug() === $slug)
+            ->map(fn ($blueprint): AbstractBlueprint => new $blueprint())
+            ->filter(fn (AbstractBlueprint $blueprint): bool => $blueprint->slug() === $slug)
             ->first();
 
         throw_if(! $blueprint, BlueprintNotFoundException::fromSlug($slug));

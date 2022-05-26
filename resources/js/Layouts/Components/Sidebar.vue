@@ -8,6 +8,7 @@
     <NavGroup
       :links="navigation.dashboards"
       :expanded="displayNav"
+      :base-path="basePath"
       label="Dashboards"
       child-icon="chart"
       class="!mt-0"
@@ -23,6 +24,7 @@
       :links="group.blueprints"
       :expanded="displayNav"
       :label="group.label"
+      :base-path="`${basePath}/blueprint`"
       child-icon="collection"
     >
       <template #icon>
@@ -53,6 +55,10 @@ export default defineComponent({
     displayNav: {
       required: true,
       type: Boolean,
+    },
+    basePath: {
+      required: true,
+      type: String,
     },
   },
 });

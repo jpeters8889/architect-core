@@ -436,20 +436,17 @@ Ensure the default browser behavior of the `hidden` attribute.
 .top-0 {
   top: 0px;
 }
-.mb-2 {
-  margin-bottom: 0.5rem;
+.\!mb-0 {
+  margin-bottom: 0px !important;
+}
+.\!mt-0 {
+  margin-top: 0px !important;
 }
 .ml-2 {
   margin-left: 0.5rem;
 }
 .mr-2 {
   margin-right: 0.5rem;
-}
-.\!mb-0 {
-  margin-bottom: 0px !important;
-}
-.\!mt-0 {
-  margin-top: 0px !important;
 }
 .block {
   display: block;
@@ -530,16 +527,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 .justify-between {
   justify-content: space-between;
 }
-.space-x-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-x-reverse: 0;
-  margin-right: calc(0.5rem * var(--tw-space-x-reverse));
-  margin-left: calc(0.5rem * calc(1 - var(--tw-space-x-reverse)));
-}
-.space-y-2 > :not([hidden]) ~ :not([hidden]) {
-  --tw-space-y-reverse: 0;
-  margin-top: calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));
-  margin-bottom: calc(0.5rem * var(--tw-space-y-reverse));
-}
 .space-y-5 > :not([hidden]) ~ :not([hidden]) {
   --tw-space-y-reverse: 0;
   margin-top: calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));
@@ -583,6 +570,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 .bg-gray-800 {
   --tw-bg-opacity: 1;
   background-color: rgb(31 41 55 / var(--tw-bg-opacity));
+}
+.bg-gray-500 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(107 114 128 / var(--tw-bg-opacity));
 }
 .p-2 {
   padding: 0.5rem;
