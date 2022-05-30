@@ -5,6 +5,9 @@ namespace Jpeters8889\Architect\Tests;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Jpeters8889\Architect\Base\Http\Middleware\HandleInertiaRequests;
+use Jpeters8889\Architect\Modules\Blueprints\Paginator;
+use Jpeters8889\Architect\Tests\AppClasses\Models\User;
+use Jpeters8889\Architect\Tests\Factories\UserFactory;
 
 class ArchitectBootTest extends TestCase
 {
@@ -41,5 +44,13 @@ class ArchitectBootTest extends TestCase
         $architectRoute = $routes->firstWhere('uri', 'architect');
 
         $this->assertContains(HandleInertiaRequests::class, $architectRoute->middleware());
+    }
+
+    /** @test */
+    public function itBindsTheCoreServices(): void
+    {
+        UserFactory::new()->create();
+
+        $this->assertInstanceOf(Paginator::class, User::query()->paginate());
     }
 }

@@ -2,7 +2,9 @@
 
 namespace Jpeters8889\Architect\Tests\Unit\Modules\Blueprints;
 
+use Illuminate\Database\Eloquent\Builder;
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
+use Jpeters8889\Architect\Modules\Fields\TextField;
 use Jpeters8889\Architect\Tests\AppClasses\UserBlueprint;
 use Jpeters8889\Architect\Tests\TestCase;
 
@@ -27,5 +29,31 @@ class BlueprintTest extends TestCase
     public function itResolvesTheSlug(): void
     {
         $this->assertEquals('users', $this->blueprint->slug());
+    }
+
+    /** @test */
+    public function itCanReturnAQueryInstance(): void
+    {
+        $this->assertInstanceOf(Builder::class, $this->blueprint->query());
+    }
+
+    /** @test */
+    public function itCanGetTheModelKeyName(): void
+    {
+        $this->assertEquals('id', $this->blueprint->modelKey());
+    }
+
+    /** @test */
+    public function itCanResolveAFieldForAGivenColumn(): void
+    {
+        $this->assertInstanceOf(TextField::class, $field = $this->blueprint->resolveFieldFromColumn('username'));
+        $this->assertEquals('username', $field->column());
+    }
+
+    /** @test */
+    public function itCanResolveAFieldForAGivenLabel(): void
+    {
+        $this->assertInstanceOf(TextField::class, $field = $this->blueprint->resolveFieldFromLabel('Email Address'));
+        $this->assertEquals('email', $field->column());
     }
 }

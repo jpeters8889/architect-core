@@ -10,6 +10,9 @@ class BlueprintController
 {
     public function list(ListService $listService): Response
     {
-        return Inertia::render('Blueprint/Index');
+        return Inertia::render('Blueprint/Index', [
+            'headers' => $listService->headers(),
+            'data' => $listService->data(),
+        ]);
     }
 }

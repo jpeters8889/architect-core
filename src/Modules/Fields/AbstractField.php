@@ -14,6 +14,8 @@ abstract class AbstractField
 
     protected ?Closure $formGetter = null;
 
+    protected bool $displayOnTable = true;
+
     final public function __construct(protected string $column, string $label = null)
     {
         if (! $label) {
@@ -75,5 +77,17 @@ abstract class AbstractField
         $this->formGetter = $getter;
 
         return $this;
+    }
+
+    public function hideOnTable(): static
+    {
+        $this->displayOnTable = false;
+
+        return $this;
+    }
+
+    public function shouldDisplayOnTable(): bool
+    {
+        return $this->displayOnTable;
     }
 }

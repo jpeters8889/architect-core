@@ -6,7 +6,7 @@
       :base-path="basePath"
     />
 
-    <div class="w-full flex-1 flex flex-col">
+    <div class="w-full flex-1 flex flex-col overflow-hidden">
       <Header
         :nav-displayed="displayNav"
         @toggle-nav="displayNav = !displayNav"

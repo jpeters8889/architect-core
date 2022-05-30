@@ -2,9 +2,11 @@
 
 namespace Jpeters8889\Architect;
 
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Jpeters8889\Architect\Base\Http\Middleware\HandleInertiaRequests;
+use Jpeters8889\Architect\Modules\Blueprints\Paginator;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
 
@@ -23,7 +25,8 @@ final class ArchitectCoreServiceProvider extends PackageServiceProvider
     {
         $this->bootGate()
             ->bootRoutes()
-            ->bootEvents();
+            ->bootEvents()
+            ->bootServices();
     }
 
     protected function bootEvents(): self
@@ -49,6 +52,13 @@ final class ArchitectCoreServiceProvider extends PackageServiceProvider
     protected function bootGate(): self
     {
         Gate::define('accessArchitect', fn () => $this->app->environment('local'));
+
+        return $this;
+    }
+
+    protected function bootServices(): self
+    {
+        $this->app->bind(LengthAwarePaginator::class, fn ($app, $args) => new Paginator(...$args));
 
         return $this;
     }
