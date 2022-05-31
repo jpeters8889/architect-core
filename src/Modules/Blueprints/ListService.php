@@ -36,7 +36,9 @@ class ListService
     /** @return Collection<int, string> */
     public function columns(): Collection
     {
-        return $this->fields->map(fn (AbstractField $field) => $field->column());
+        return $this->fields
+            ->filter(fn (AbstractField $field) => $field->shouldDisplayOnTable())
+            ->map(fn (AbstractField $field) => $field->column());
     }
 
     public function blueprint(): AbstractBlueprint

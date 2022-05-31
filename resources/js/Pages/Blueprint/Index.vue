@@ -10,7 +10,7 @@
           <thead>
             <tr class="divide-x divide-gray-300 leading-none text-sm">
               <template
-                v-for="header in headers"
+                v-for="header in headers.labels"
                 :key="header"
               >
                 <th class="px-2 py-1 bg-gray-200 text-gray-600 whitespace-nowrap">
@@ -20,16 +20,21 @@
             </tr>
           </thead>
           <tbody>
-            <tr class="divide-x divide-gray-300 leading-none text-sm">
-              <template
-                v-for="header in headers"
-                :key="header"
-              >
-                <td class="px-2 py-1 text-gray-600 flex-shrink-0">
-                  test
-                </td>
-              </template>
-            </tr>
+            <template
+              v-for="row in data.items"
+              :key="row.id"
+            >
+              <tr class="divide-x divide-gray-300 leading-none text-sm">
+                <template
+                  v-for="column in headers.columns"
+                  :key="column"
+                >
+                  <td class="px-2 py-1 text-gray-600 flex-shrink-0">
+                    {{ row[column] }}
+                  </td>
+                </template>
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>
@@ -40,6 +45,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import Architect from '../../Layouts/Architect.vue';
+import { BlueprintTableDataSet, BlueprintTableHeaderSet } from '../../types';
 
 export default defineComponent({
   layout: Architect,
@@ -47,7 +53,11 @@ export default defineComponent({
   props: {
     headers: {
       required: true,
-      type: Array as () => string[],
+      type: Object as () => BlueprintTableHeaderSet,
+    },
+    data: {
+      required: true,
+      type: Object as () => BlueprintTableDataSet,
     },
   },
 });

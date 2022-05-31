@@ -44,7 +44,11 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
 
             $concreteBlueprint = resolve(BlueprintRegistrar::class)->resolveFromSlug((string)$blueprint);
 
-            return new ListService($concreteBlueprint);
+            $listService = new ListService($concreteBlueprint);
+
+            $listService->load(request()?->get('page'));
+
+            return $listService;
         });
     }
 

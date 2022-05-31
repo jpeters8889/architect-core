@@ -15,3 +15,16 @@ export type NavigationChild = {
   label: string;
   slug: string;
 };
+
+export type BlueprintTableHeaderSet = {
+  labels: string[];
+  columns: string[];
+};
+
+export type BlueprintTableDataSet = {
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  numberOfPages: number;
+  items: { [K: string]: any }[];
+};

@@ -80,7 +80,7 @@ class ListServiceTest extends TestCase
     }
 
     /** @test */
-    public function itKnowsTheCurrentPage(): void
+    public function itKnowsTheCurrentPageInTheCurrentDataSet(): void
     {
         UserFactory::new()->count(15)->create();
 
@@ -90,7 +90,7 @@ class ListServiceTest extends TestCase
     }
 
     /** @test */
-    public function itKnowsTheNumberOfPages(): void
+    public function itKnowsTheNumberOfPagesInTheCurrentDataSet(): void
     {
         UserFactory::new()->count(15)->create();
 
@@ -100,7 +100,7 @@ class ListServiceTest extends TestCase
     }
 
     /** @test */
-    public function itKnowsIfItHasANextPage(): void
+    public function itKnowsIfItHasANextPageInTheCurrentDataSet(): void
     {
         UserFactory::new()->count(15)->create();
 
@@ -114,7 +114,7 @@ class ListServiceTest extends TestCase
     }
 
     /** @test */
-    public function itKnowsIfItHasAPreviousPage(): void
+    public function itKnowsIfItHasAPreviousPageInTheCurrentDataSet(): void
     {
         UserFactory::new()->count(15)->create();
 
@@ -128,18 +128,39 @@ class ListServiceTest extends TestCase
     }
 
     /** @test */
-    public function itCanLoadTheItems(): void
+    public function itCanLoadTheItemsInTheCurrentDataSet(): void
     {
         UserFactory::new()->count(15)->create();
 
         $this->listService->load();
 
         $this->assertInstanceOf(Collection::class, $this->listService->data()['items']);
+        $this->assertCount($this->listService->blueprint()->perPage(), $this->listService->data()['items']);
     }
 
     /** @test */
-    public function itFormatsEachItem(): void
+    public function itReturnsTheRequiredKeysForEachItemInTheCurrentDataSet(): void
     {
-        //
+        UserFactory::new()->create();
+
+        $this->listService->load();
+        $items = $this->listService->data()['items'];
+
+        $this->listService->columns()->each(fn (string $column) => $this->assertArrayHasKey($column, $items[0]));
+    }
+
+    /** @test */
+    public function itFormatsEachItemInTheCurrentDataSet(): void
+    {
+        $user = UserFactory::new()->create();
+
+        $this->listService->load();
+        $items = $this->listService->data()['items'];
+
+        $this->listService->columns()->each(function (string $column) use ($items, $user) {
+            $value = $this->listService->blueprint()->resolveFieldFromColumn($column)?->getCurrentValueForTable($user);
+
+            $this->assertEquals($value, $items[0][$column]);
+        });
     }
 }
