@@ -41,6 +41,14 @@ class ListService
             ->map(fn (AbstractField $field) => $field->column());
     }
 
+    /** @return Collection<int, string> */
+    public function components(): Collection
+    {
+        return $this->fields
+            ->filter(fn (AbstractField $field) => $field->shouldDisplayOnTable())
+            ->map(fn (AbstractField $field) => $field->component());
+    }
+
     public function blueprint(): AbstractBlueprint
     {
         return $this->blueprint;
@@ -67,15 +75,37 @@ class ListService
         return $this;
     }
 
+    /** @return array{title: string, headers: Collection<int, array{label: string, column: string, component: string}>} */
+    public function metas(): array
+    {
+        /** @var string[] $columns */
+        $columns = $this->columns()->toArray();
+
+        /** @var string[] $components */
+        $components = $this->components()->toArray();
+
+        return [
+            'title' => $this->blueprint()->label(),
+            'headers' => $this->headers()->map(fn (string $header, int $index) => [
+                'label' => $header,
+                'column' => $columns[$index],
+                'component' => $components[$index],
+            ]),
+        ];
+    }
+
     /** @return array{currentPage: numeric, numberOfPages: numeric, hasNextPage: bool, hasPreviousPage: bool, items: Collection<int, Collection<string, mixed>>} */
     public function data(): array
     {
+        /** @var Paginator $paginator */
+        $paginator = $this->paginator();
+
         return [
-            'currentPage' => $this->paginator()->currentPage(),
-            'numberOfPages' => $this->paginator->lastPage(),
-            'hasNextPage' => $this->paginator()->hasMorePages(),
-            'hasPreviousPage' => $this->paginator->currentPage() > 1,
-            'items' => $this->paginator()->currentItems($this),
+            'currentPage' => $paginator->currentPage(),
+            'numberOfPages' => $paginator->lastPage(),
+            'hasNextPage' => $paginator->hasMorePages(),
+            'hasPreviousPage' => $paginator->currentPage() > 1,
+            'items' => $paginator->currentItems($this),
         ];
     }
 }

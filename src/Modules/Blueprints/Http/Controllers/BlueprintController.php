@@ -11,7 +11,7 @@ class BlueprintController
     public function list(ListService $listService): Response
     {
         return Inertia::render('Blueprint/Index', [
-            'headers' => ['labels' => $listService->headers()->values(), 'columns' => $listService->columns()->values()],
+            'metas' => $listService->metas(),
             'data' => $listService->data(),
         ]);
     }

@@ -16,9 +16,13 @@ export type NavigationChild = {
   slug: string;
 };
 
-export type BlueprintTableHeaderSet = {
-  labels: string[];
-  columns: string[];
+export type BlueprintTableMetaSet = {
+  title: string;
+  headers: {
+    label: string;
+    column: string;
+    component: string;
+  }[];
 };
 
 export type BlueprintTableDataSet = {

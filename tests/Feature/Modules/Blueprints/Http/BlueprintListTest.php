@@ -9,13 +9,6 @@ use Jpeters8889\Architect\Tests\FeatureTestCase;
 
 class BlueprintListTest extends FeatureTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->withExceptionHandling();
-    }
-
     /** @test */
     public function itErrorsIfABlueprintDoesntExist(): void
     {
@@ -35,6 +28,6 @@ class BlueprintListTest extends FeatureTestCase
         $listService->load();
 
         $this->get('/architect/blueprint/users')
-            ->assertInertia(fn (Assert $page) => $page->component('Blueprint/Index')->has('data'));
+            ->assertInertia(fn (Assert $page) => $page->component('Blueprint/Index')->has('data')->has('metas'));
     }
 }

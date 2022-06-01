@@ -5,6 +5,7 @@ namespace Jpeters8889\Architect\Modules\Blueprints;
 use Illuminate\Support\Collection;
 use Jpeters8889\Architect\Modules\Blueprints\Exceptions\BlueprintNotFoundException;
 use Jpeters8889\Architect\Shared\Contracts\RegistrarContract;
+use Throwable;
 
 /** @implements RegistrarContract<AbstractBlueprint> */
 class Registrar implements RegistrarContract
@@ -29,6 +30,7 @@ class Registrar implements RegistrarContract
         return $this->blueprints;
     }
 
+    /** @throws BlueprintNotFoundException|Throwable */
     public function resolveFromSlug(string $slug): AbstractBlueprint
     {
         $blueprint = $this->all()

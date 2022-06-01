@@ -3,10 +3,12 @@
 namespace Jpeters8889\Architect\Base\Providers;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Jpeters8889\Architect\ArchitectCore;
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
+use Jpeters8889\Architect\Modules\Blueprints\Exceptions\BlueprintNotFoundException;
 use Jpeters8889\Architect\Modules\Blueprints\ListService;
 use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
 use Jpeters8889\Architect\Modules\Dashboards\AbstractDashboard;
@@ -38,17 +40,24 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
     protected function prepareInjectableDependencies(): void
     {
         $this->app->scoped(ListService::class, function (): ListService {
-            $blueprint = Route::current()?->parameter('blueprint');
+            try {
+                $blueprint = Route::current()?->parameter('blueprint');
 
-            throw_if(! $blueprint, new BindingResolutionException('Can only bind ListService when using a Blueprint'));
+                throw_if(! $blueprint, new BindingResolutionException('Can only bind ListService when using a Blueprint'));
 
-            $concreteBlueprint = resolve(BlueprintRegistrar::class)->resolveFromSlug((string)$blueprint);
+                $concreteBlueprint = resolve(BlueprintRegistrar::class)->resolveFromSlug((string)$blueprint);
 
-            $listService = new ListService($concreteBlueprint);
+                $listService = new ListService($concreteBlueprint);
 
-            $listService->load(request()?->get('page'));
+                /** @var int $page */
+                $page = Request::get('page');
 
-            return $listService;
+                $listService->load($page ?: null);
+
+                return $listService;
+            } catch (BlueprintNotFoundException $exception) {
+                abort(404);
+            }
         });
     }
 

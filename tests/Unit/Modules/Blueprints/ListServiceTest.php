@@ -48,11 +48,28 @@ class ListServiceTest extends TestCase
     }
 
     /** @test */
+    public function itCanReturnACollectionOfTableRowComponents(): void
+    {
+        $components = $this->listService->components();
+
+        $this->assertInstanceOf(Collection::class, $components);
+        $this->assertContains('TextField', $components);
+    }
+
+    /** @test */
     public function itDoesntReturnAnItemInHeadersIfTheFieldIsSetToNotShowInTable(): void
     {
         $headers = $this->listService->headers();
 
         $this->assertNotContains('Password', $headers);
+    }
+
+    /** @test */
+    public function itDoesntReturnAnItemInColumnsIfTheFieldIsSetToNotShowInTable(): void
+    {
+        $columns = $this->listService->columns();
+
+        $this->assertNotContains('Password', $columns);
     }
 
     /** @test */
@@ -63,6 +80,45 @@ class ListServiceTest extends TestCase
         $this->assertNotNull($this->listService->paginator());
         $this->assertInstanceOf(LengthAwarePaginator::class, $this->listService->paginator());
         $this->assertInstanceOf(Paginator::class, $this->listService->paginator());
+    }
+
+    /** @test */
+    public function itCanReturnTheListServiceMetaInformation(): void
+    {
+        $this->assertNotNull($this->listService->metas());
+        $this->assertIsArray($this->listService->metas());
+    }
+
+    /** @test */
+    public function itReturnsTheBlueprintTitleInTheMetas(): void
+    {
+        $metas = $this->listService->metas();
+
+        $this->assertArrayHasKey('title', $metas);
+        $this->assertEquals('Users', $metas['title']);
+    }
+
+    /** @test */
+    public function itReturnsTheFormattedHeaderInformationInTheMetas(): void
+    {
+        $metas = $this->listService->metas();
+
+        $this->assertArrayHasKey('headers', $metas);
+
+        $headers = $this->listService->headers();
+        $columns = $this->listService->columns();
+        $components = $this->listService->components();
+
+        foreach ($metas['headers'] as $index => $header) {
+            $this->assertArrayHasKey('label', $header);
+            $this->assertEquals($headers[$index], $header['label']);
+
+            $this->assertArrayHasKey('column', $header);
+            $this->assertEquals($columns[$index], $header['column']);
+
+            $this->assertArrayHasKey('component', $header);
+            $this->assertEquals($components[$index], $header['component']);
+        }
     }
 
     /** @test */

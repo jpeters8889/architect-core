@@ -10,6 +10,8 @@ class FeatureTestCase extends TestCase
     {
         parent::setUp();
 
+        $this->withExceptionHandling();
+
         $this->artisan('vendor:publish', ['--tag' => 'architect-core-assets', '--force' => true]);
     }
 

@@ -90,4 +90,9 @@ abstract class AbstractField
     {
         return $this->displayOnTable;
     }
+
+    public function component(): string
+    {
+        return class_basename($this);
+    }
 }

@@ -7,7 +7,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 
-/** @implements \Illuminate\Contracts\Pagination\LengthAwarePaginator */
 class Paginator extends LengthAwarePaginator
 {
     /**
