@@ -56,4 +56,15 @@ class BlueprintTest extends TestCase
         $this->assertInstanceOf(TextField::class, $field = $this->blueprint->resolveFieldFromLabel('Email Address'));
         $this->assertEquals('email', $field->column());
     }
+
+    /** @test */
+    public function itCanSpecifyHowToOrderTheQueryResults(): void
+    {
+        $query = $this->blueprint->query()->orderBy(...$this->blueprint->orderBy());
+
+        $ordering = $query->toBase()->orders;
+
+        $this->assertEquals('created_at', $ordering[0]['column']);
+        $this->assertEquals('desc', $ordering[0]['direction']);
+    }
 }

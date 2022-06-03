@@ -15,6 +15,8 @@ class ListService
 
     protected int $currentPage = 1;
 
+    protected array $currentSorting;
+
     public function __construct(protected AbstractBlueprint $blueprint)
     {
         $this->collectFields();
@@ -59,11 +61,17 @@ class ListService
         return $this->paginator;
     }
 
-    public function load(int $page = null): self
+    /** @param array{string, 'asc | 'desc} */
+    public function load(int $page = null, array $sorting = null): self
     {
+        if (! $sorting) {
+            $sorting = $this->blueprint->orderBy();
+        }
+
         $this->paginator = $this
             ->blueprint
             ->query()
+            ->orderBy(...$sorting)
             ->paginate(
                 $this->blueprint->perPage(),
                 [$this->blueprint->modelKey()],
@@ -72,10 +80,12 @@ class ListService
 
         $this->currentPage = $page ?: 1;
 
+        $this->currentSorting = $sorting;
+
         return $this;
     }
 
-    /** @return array{title: string, headers: Collection<int, array{label: string, column: string, component: string}>} */
+    /** @return array{title: string, headers: Collection<int, array{label: string, column: string, component: string, sortable: bool}>} */
     public function metas(): array
     {
         /** @var string[] $columns */
@@ -90,7 +100,8 @@ class ListService
                 'label' => $header,
                 'column' => $columns[$index],
                 'component' => $components[$index],
-            ]),
+                'sortable' => (bool)$this->blueprint->resolveFieldFromLabel($header)?->sortable(),
+            ])->values(),
         ];
     }
 
@@ -107,5 +118,10 @@ class ListService
             'hasPreviousPage' => $paginator->currentPage() > 1,
             'items' => $paginator->currentItems($this),
         ];
+    }
+
+    public function sortBy(): array
+    {
+        return $this->currentSorting;
     }
 }

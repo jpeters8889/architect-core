@@ -2,6 +2,7 @@
 
 namespace Jpeters8889\Architect\Tests\Unit\Modules\Blueprints;
 
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
 use Jpeters8889\Architect\Modules\Blueprints\ListService;
@@ -9,6 +10,7 @@ use Jpeters8889\Architect\Modules\Blueprints\Paginator;
 use Jpeters8889\Architect\Tests\AppClasses\UserBlueprint;
 use Jpeters8889\Architect\Tests\Factories\UserFactory;
 use Jpeters8889\Architect\Tests\TestCase;
+use Spatie\TestTime\TestTime;
 
 class ListServiceTest extends TestCase
 {
@@ -105,9 +107,9 @@ class ListServiceTest extends TestCase
 
         $this->assertArrayHasKey('headers', $metas);
 
-        $headers = $this->listService->headers();
-        $columns = $this->listService->columns();
-        $components = $this->listService->components();
+        $headers = $this->listService->headers()->values();
+        $columns = $this->listService->columns()->values();
+        $components = $this->listService->components()->values();
 
         foreach ($metas['headers'] as $index => $header) {
             $this->assertArrayHasKey('label', $header);
@@ -118,6 +120,12 @@ class ListServiceTest extends TestCase
 
             $this->assertArrayHasKey('component', $header);
             $this->assertEquals($components[$index], $header['component']);
+
+            $this->assertArrayHasKey('sortable', $header);
+            $this->assertEquals(
+                $this->listService->blueprint()->resolveFieldFromLabel($header['label'])?->sortable(),
+                $header['sortable']
+            );
         }
     }
 
@@ -218,5 +226,19 @@ class ListServiceTest extends TestCase
 
             $this->assertEquals($value, $items[0][$column]);
         });
+    }
+
+    /** @test */
+    public function itOrdersTheItemsUsingTheGivenOrderingProperty(): void
+    {
+        TestTime::freeze();
+
+        $user1 = UserFactory::new()->create(['created_at' => Carbon::now()->subYear(), 'updated_at' => Carbon::now()->subYear()]);
+        $user2 = UserFactory::new()->create();
+
+        $this->listService->load();
+        $items = $this->listService->data()['items'];
+
+        $this->assertSame($user2->id, $items[0]['id']);
     }
 }

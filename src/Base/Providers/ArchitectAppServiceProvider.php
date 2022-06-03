@@ -51,8 +51,9 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
 
                 /** @var int $page */
                 $page = Request::get('page');
+                $sorting = Request::has('sortItem') ? [Request::get('sortItem'), Request::get('sortDirection', 'asc')] : null;
 
-                $listService->load($page ?: null);
+                $listService->load($page ?: null, $sorting);
 
                 return $listService;
             } catch (BlueprintNotFoundException $exception) {

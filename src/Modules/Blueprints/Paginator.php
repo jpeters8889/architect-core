@@ -21,7 +21,7 @@ class Paginator extends LengthAwarePaginator
             ->map(fn (string $header) => $listService->blueprint()->resolveFieldFromLabel($header))
             ->filter(fn (AbstractField|null $field) => $field !== null);
 
-        return $listService->blueprint()->query()->findMany($ids)
+        return $listService->blueprint()->query()->orderBy(...$listService->sortBy())->findMany($ids)
             ->map(fn (Model $item) => $columns->mapWithKeys(
                 fn (AbstractField $field) => [
                     $field->column() => $field->getCurrentValueForTable($item),

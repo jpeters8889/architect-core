@@ -69,4 +69,10 @@ abstract class AbstractBlueprint implements Registerable
             ->filter(fn (AbstractField $field) => $field->label() === $label)
             ->first();
     }
+
+    /** @return array{string, 'asc|'desc'} */
+    public function orderBy(): array
+    {
+        return ['id', 'desc'];
+    }
 }

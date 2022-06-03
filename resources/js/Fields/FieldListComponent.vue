@@ -6,7 +6,11 @@
 </template>
 
 <script>
+import ListComponentRegistrar from './ListComponentRegistrar';
+
 export default {
+  components: ListComponentRegistrar,
+
   props: {
     component: {
       required: true,
@@ -16,11 +20,6 @@ export default {
       required: true,
       type: [String, Number, Array, Object],
     },
-  },
-
-  created() {
-    // eslint-disable-next-line global-require,import/no-dynamic-require
-    this.$options.components = { [this.component]: require(`./${this.component}/List.vue`).default };
   },
 };
 </script>

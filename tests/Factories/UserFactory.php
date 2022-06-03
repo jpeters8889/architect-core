@@ -17,6 +17,7 @@ class UserFactory extends Factory
             'email' => $this->faker->email,
             'username' => $this->faker->userName,
             'password' => Hash::make('password'),
+            'active' => $this->faker->boolean,
         ];
     }
 }

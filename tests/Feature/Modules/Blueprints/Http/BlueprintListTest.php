@@ -28,6 +28,12 @@ class BlueprintListTest extends FeatureTestCase
         $listService->load();
 
         $this->get('/architect/blueprint/users')
-            ->assertInertia(fn (Assert $page) => $page->component('Blueprint/Index')->has('data')->has('metas'));
+            ->assertInertia(
+                fn (Assert $page) => $page->component('Blueprint/Index')
+                ->has('data')
+                ->has('metas')
+                ->has('currentPage')
+                ->has('currentSort')
+            );
     }
 }

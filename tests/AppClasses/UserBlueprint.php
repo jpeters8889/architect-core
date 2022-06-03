@@ -3,6 +3,8 @@
 namespace Jpeters8889\Architect\Tests\AppClasses;
 
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
+use Jpeters8889\Architect\Modules\Fields\Checkbox;
+use Jpeters8889\Architect\Modules\Fields\DateTime;
 use Jpeters8889\Architect\Modules\Fields\TextField;
 use Jpeters8889\Architect\Tests\AppClasses\Models\User;
 
@@ -24,7 +26,14 @@ class UserBlueprint extends AbstractBlueprint
 
             TextField::make('password')->hideOnTable(),
 
-            TextField::make('created_at'),
+            Checkbox::make('active')->isSortable(),
+
+            DateTime::make('created_at')->isSortable(),
         ];
+    }
+
+    public function orderBy(): array
+    {
+        return ['created_at', 'desc'];
     }
 }

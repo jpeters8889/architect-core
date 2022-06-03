@@ -22,6 +22,7 @@ export type BlueprintTableMetaSet = {
     label: string;
     column: string;
     component: string;
+    sortable: boolean;
   }[];
 };
 
@@ -32,3 +33,16 @@ export type BlueprintTableDataSet = {
   numberOfPages: number;
   items: { [K: string]: any }[];
 };
+
+export type BlueprintTableSortableDataSet = {
+  column: string,
+  direction: 'asc' | 'desc',
+};
+
+export type BlueprintTableQueryStringParameters = {
+  page: number,
+  sortItem: string,
+  sortDirection: 'asc' | 'desc',
+};
+
+export type PaginationData = { label: string, goTo: number }[];

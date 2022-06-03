@@ -72,4 +72,16 @@ abstract class FieldTestCase extends TestCase
 
         $this->assertEquals('FooBar Appended', $field->getCurrentValueForForm($user));
     }
+
+    /** @test */
+    public function itKnowsWhetherItsSortable(): void
+    {
+        $field = $this->makeField('username');
+
+        $this->assertFalse($field->sortable());
+
+        $field->isSortable();
+
+        $this->assertTrue($field->sortable());
+    }
 }

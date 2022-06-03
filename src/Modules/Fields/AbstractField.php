@@ -16,6 +16,8 @@ abstract class AbstractField
 
     protected bool $displayOnTable = true;
 
+    protected bool $sortable = false;
+
     final public function __construct(protected string $column, string $label = null)
     {
         if (! $label) {
@@ -23,6 +25,13 @@ abstract class AbstractField
         }
 
         $this->label = $label;
+
+        $this->booted();
+    }
+
+    protected function booted(): void
+    {
+        //
     }
 
     public static function make(string $column, string $label = null): static
@@ -94,5 +103,17 @@ abstract class AbstractField
     public function component(): string
     {
         return class_basename($this);
+    }
+
+    public function sortable(): bool
+    {
+        return $this->sortable;
+    }
+
+    public function isSortable(): static
+    {
+        $this->sortable = true;
+
+        return $this;
     }
 }
