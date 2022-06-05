@@ -61,7 +61,7 @@ class ListService
         return $this->paginator;
     }
 
-    /** @param array{string, 'asc | 'desc} */
+    /** @param array{string, 'asc' | 'desc'} | null $sorting */
     public function load(int $page = null, array $sorting = null): self
     {
         if (! $sorting) {

@@ -31,7 +31,19 @@ export type BlueprintTableDataSet = {
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   numberOfPages: number;
-  items: { [K: string]: any }[];
+  items: {
+    $meta: BlueprintTableButtonSettings;
+    [K: string]: any
+  }[];
+};
+
+export type BlueprintTableButtonSettings = {
+  canDelete: boolean;
+  isDeleted: boolean;
+  canDuplicate: boolean;
+  canEdit: boolean;
+  publicUrl?: string | null;
+  id: string | number;
 };
 
 export type BlueprintTableSortableDataSet = {
@@ -44,5 +56,7 @@ export type BlueprintTableQueryStringParameters = {
   sortItem: string,
   sortDirection: 'asc' | 'desc',
 };
+
+export type BlueprintTableButtonEvent = 'delete' | 'restore' | 'edit' | 'open' | 'duplicate';
 
 export type PaginationData = { label: string, goTo: number }[];

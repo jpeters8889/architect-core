@@ -2,9 +2,11 @@
 
 namespace Jpeters8889\Architect\Modules\Blueprints\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
+use Jpeters8889\Architect\Modules\Blueprints\DeletionService;
 use Jpeters8889\Architect\Modules\Blueprints\ListService;
 
 class BlueprintController
@@ -19,5 +21,19 @@ class BlueprintController
                 'direction' => $request->get('sortDirection', $listService->blueprint()->orderBy()[1]),
             ],
         ]);
+    }
+
+    public function delete(DeletionService $deletionService): RedirectResponse
+    {
+        $deletionService->handleDelete();
+
+        return back();
+    }
+
+    public function restore(DeletionService $deletionService): RedirectResponse
+    {
+        $deletionService->handleRestore();
+
+        return back();
     }
 }

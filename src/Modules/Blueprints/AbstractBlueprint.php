@@ -70,9 +70,44 @@ abstract class AbstractBlueprint implements Registerable
             ->first();
     }
 
-    /** @return array{string, 'asc|'desc'} */
+    /** @return array{string, 'asc'|'desc'} */
     public function orderBy(): array
     {
         return ['id', 'desc'];
+    }
+
+    public function canEdit(Model $model): bool
+    {
+        return true;
+    }
+
+    public function canDelete(Model $model): bool
+    {
+        return true;
+    }
+
+    public function isItemDeleted(Model $model): bool
+    {
+        return $model->exists !== true;
+    }
+
+    public function canDuplicate(Model $model): bool
+    {
+        return true;
+    }
+
+    public function publicUrl(Model $model): string|null
+    {
+        return null;
+    }
+
+    public function handleDelete(Model $model): void
+    {
+        $model->delete();
+    }
+
+    public function handleRestore(Model $model): void
+    {
+        //
     }
 }

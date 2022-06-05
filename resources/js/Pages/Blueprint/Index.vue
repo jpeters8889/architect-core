@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col space-y-5 justify-between items-center overflow-hidden">
-    <div class="w-full flex justify-between items-center p-2">
+    <div class="w-full flex justify-between items-center p-2 xl:p-4">
       <div>
         <h1 class="text-xl font-semibold">
           {{ metas.title }}
@@ -9,52 +9,53 @@
     </div>
 
     <div class="w-full">
-      <div
-        class="m-2 overflow-x-scroll border border-gray-300 rounded shadow"
-        scroll-region
-      >
-        <table>
-          <thead>
-            <tr class="divide-x divide-gray-300 leading-none text-sm">
-              <th
-                v-for="header in metas.headers"
-                :key="header.column"
-                class="p-2 bg-gray-200 text-gray-600 whitespace-nowrap text-left"
-              >
-                <div class="flex justify-between items-center">
-                  <span>{{ header.label }}</span>
-
-                  <Sorter
-                    v-if="header.sortable"
-                    :column="header.column"
-                    :current-sort="currentSort"
-                    class="ml-4"
-                    @sort-change="sortChange"
-                  />
-                </div>
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-300">
-            <tr
-              v-for="row in data.items"
-              :key="row.id"
-              class="divide-x divide-gray-300 leading-none text-sm even:bg-gray-100 hover:bg-blue-100 transition"
+      <TableWrapper>
+        <template #header>
+          <TableHeaderRow>
+            <TableHeaderCell
+              v-for="header in metas.headers"
+              :key="header.column"
             >
-              <td
-                v-for="header in metas.headers"
-                :key="header.column"
-                class="px-2 py-1 text-gray-600"
-              >
-                <FieldListComponent
-                  :value="row[header.column]"
-                  :component="header.component"
+              <div class="flex justify-between items-center">
+                <span>{{ header.label }}</span>
+
+                <Sorter
+                  v-if="header.sortable"
+                  :column="header.column"
+                  :current-sort="currentSort"
+                  class="ml-2"
+                  @sort-change="sortChange"
                 />
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </div>
+            </TableHeaderCell>
+
+            <TableHeaderCell />
+          </TableHeaderRow>
+        </template>
+
+        <TableRow
+          v-for="row in data.items"
+          :key="row.id"
+          class="divide-x divide-gray-300 leading-none text-sm even:bg-gray-100 hover:bg-blue-100 transition"
+        >
+          <TableCell
+            v-for="header in metas.headers"
+            :key="header.column"
+          >
+            <FieldListComponent
+              :value="row[header.column]"
+              :component="header.component"
+            />
+          </TableCell>
+
+          <TableCell>
+            <TableButtons
+              :settings="row.$meta"
+              @button-press="buttonPressed"
+            />
+          </TableCell>
+        </TableRow>
+      </TableWrapper>
     </div>
 
     <div class="w-full pb-3">
@@ -72,6 +73,7 @@ import { defineComponent } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import Architect from '../../Layouts/Architect.vue';
 import {
+  BlueprintTableButtonEvent,
   BlueprintTableDataSet,
   BlueprintTableMetaSet,
   BlueprintTableQueryStringParameters,
@@ -80,9 +82,21 @@ import {
 import FieldListComponent from '../../Fields/FieldListComponent.vue';
 import Paginator from '../../Components/Paginator.vue';
 import Sorter from '../../Components/Sorter.vue';
+import TableWrapper from '../../Components/Table/TableWrapper.vue';
+import TableRow from '../../Components/Table/TableRow.vue';
+import TableHeaderRow from '../../Components/Table/TableHeaderRow.vue';
+import TableHeaderCell from '../../Components/Table/TableHeaderCell.vue';
+import TableCell from '../../Components/Table/TableCell.vue';
+import TableButtons from '../../Components/Blueprints/TableButtons.vue';
 
 export default defineComponent({
   components: {
+    TableButtons,
+    TableCell,
+    TableHeaderCell,
+    TableHeaderRow,
+    TableRow,
+    TableWrapper,
     Sorter,
     Paginator,
     FieldListComponent,
@@ -129,6 +143,19 @@ export default defineComponent({
       this.queryStringParameters.sortDirection = sortable.direction;
 
       Inertia.get(window.location.pathname, this.queryStringParameters, { only: ['data', 'currentSort'], preserveScroll: true });
+    },
+
+    buttonPressed(button: BlueprintTableButtonEvent, id: number | string) {
+      if (typeof id === 'number') {
+        id = id.toString(10);
+      }
+
+      switch (button) {
+        case 'delete':
+          return Inertia.delete(`${window.location.pathname}/${id}`, { preserveScroll: true });
+        case 'restore':
+          return Inertia.put(`${window.location.pathname}/${id}`, { preserveScroll: true });
+      }
     },
   },
 });

@@ -1,10 +1,8 @@
 <template>
   <div
-    class="flex-1 flex-grow-0 w-14 bg-gray-900 px-2 transition-[width] space-y-5"
+    class="flex-1 flex-grow-0 w-14 bg-gray-300 p-2 transition-[width] space-y-5 shadow-2xl"
     :class="displayNav ? 'xl:min-w-[300px]' : ''"
   >
-    <div class="h-10 !mb-0" />
-
     <NavGroup
       :links="navigation.dashboards"
       :expanded="displayNav"

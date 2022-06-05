@@ -1,18 +1,22 @@
 <template>
-  <div
-    class="px-3 py-1 rounded-full inline-block font-semibold text-xs mx-auto"
-    :class="value === 'Yes' ? 'bg-green-300 text-green-900' : 'bg-red-300 text-red-900'"
-  >
-    {{ value }}
+  <div :class="value ? 'text-green-500' : 'text-red-500'">
+    <component
+      :is="value ? 'CheckCircleIcon' : 'XCircleIcon'"
+      class="h-5 w-5"
+    />
   </div>
 </template>
 
 <script>
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/vue/outline';
+
 export default {
+  components: { CheckCircleIcon, XCircleIcon },
+
   props: {
     value: {
       required: true,
-      type: [String],
+      type: Boolean,
     },
   },
 };

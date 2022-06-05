@@ -19,6 +19,6 @@ class CheckboxFieldTest extends FieldTestCase
         $user = UserFactory::new()->create(['active' => true]);
         $field = $this->makeField('username');
 
-        $this->assertEquals('Yes', $field->getCurrentValueForTable($user));
+        $this->assertTrue($field->getCurrentValueForTable($user));
     }
 }

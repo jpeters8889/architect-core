@@ -1,21 +1,23 @@
 <template>
-  <div class="w-full min-h-screen flex bg-gray-300">
-    <Sidebar
-      :navigation="navigation"
-      :display-nav="displayNav"
-      :base-path="basePath"
+  <div class="w-full min-h-screen flex flex-col bg-gray-300">
+    <Header
+      :nav-displayed="displayNav"
+      @toggle-nav="displayNav = !displayNav"
     />
 
-    <div class="w-full flex-1 flex flex-col overflow-hidden">
-      <Header
-        :nav-displayed="displayNav"
-        @toggle-nav="displayNav = !displayNav"
+    <div class="w-full flex-1 flex">
+      <Sidebar
+        :navigation="navigation"
+        :display-nav="displayNav"
+        :base-path="basePath"
       />
 
-      <div class="p-2 flex-1">
-        <CardSkeleton>
-          <slot />
-        </CardSkeleton>
+      <div class="w-full overflow-hidden">
+        <div class="p-4 flex-1">
+          <CardSkeleton>
+            <slot />
+          </CardSkeleton>
+        </div>
       </div>
     </div>
   </div>

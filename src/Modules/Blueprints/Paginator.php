@@ -21,11 +21,24 @@ class Paginator extends LengthAwarePaginator
             ->map(fn (string $header) => $listService->blueprint()->resolveFieldFromLabel($header))
             ->filter(fn (AbstractField|null $field) => $field !== null);
 
-        return $listService->blueprint()->query()->orderBy(...$listService->sortBy())->findMany($ids)
-            ->map(fn (Model $item) => $columns->mapWithKeys(
-                fn (AbstractField $field) => [
-                    $field->column() => $field->getCurrentValueForTable($item),
-                ]
-            ));
+        return $listService
+            ->blueprint()
+            ->query()
+            ->orderBy(...$listService->sortBy())->findMany($ids)
+            ->map(fn (Model $item) => collect([
+                '$meta' => [
+                    'canEdit' => $listService->blueprint()->canEdit($item),
+                    'canDelete' => $listService->blueprint()->canDelete($item),
+                    'isDeleted' => $listService->blueprint()->isItemDeleted($item),
+                    'canDuplicate' => $listService->blueprint()->canDuplicate($item),
+                    'publicUrl' => $listService->blueprint()->publicUrl($item),
+                    'id' => $item->{$listService->blueprint()->modelKey()},
+                ],
+                ...$columns->mapWithKeys(
+                    fn (AbstractField $field) => [
+                        $field->column() => $field->getCurrentValueForTable($item),
+                    ]
+                ),
+            ]));
     }
 }

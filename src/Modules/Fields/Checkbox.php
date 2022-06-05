@@ -8,6 +8,6 @@ class Checkbox extends AbstractField
 {
     protected function booted(): void
     {
-        $this->getValueForTableUsing(fn (Model $model) => $model->{$this->column} ? 'Yes' : 'No');
+        $this->getValueForTableUsing(fn (Model $model) => (bool)$model->{$this->column});
     }
 }

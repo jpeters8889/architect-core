@@ -1,11 +1,10 @@
 <template>
-  <div class="flex items-center gap-px">
+  <div class="flex flex-col items-center space-y-[-6px]">
     <ChevronUpIcon
       class="w-4 h-4"
       :class="column === currentSort.column && currentSort.direction === 'asc' ? 'fill-blue-500' : ''"
       @click="sort('asc')"
     />
-    <span>/</span>
     <ChevronDownIcon
       class="w-4 h-4"
       :class="column === currentSort.column && currentSort.direction === 'desc' ? 'fill-blue-500' : 'cursor-pointer'"

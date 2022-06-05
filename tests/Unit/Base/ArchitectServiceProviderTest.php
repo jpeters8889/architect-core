@@ -4,6 +4,7 @@ namespace Jpeters8889\Architect\Tests\Unit\Base;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Jpeters8889\Architect\ArchitectCore;
+use Jpeters8889\Architect\Modules\Blueprints\DeletionService;
 use Jpeters8889\Architect\Modules\Blueprints\ListService;
 use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
 use Jpeters8889\Architect\Modules\Dashboards\Registrar as DashboardRegistrar;
@@ -68,5 +69,13 @@ class ArchitectServiceProviderTest extends TestCase
         $this->expectException(BindingResolutionException::class);
 
         resolve(ListService::class);
+    }
+
+    /** @test */
+    public function itErrorsWhenTryingToGetABlueprintDeletionServiceWhenNotOnABlueprintUrl(): void
+    {
+        $this->expectException(BindingResolutionException::class);
+
+        resolve(DeletionService::class);
     }
 }

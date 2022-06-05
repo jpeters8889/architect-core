@@ -5,7 +5,7 @@
   >
     <MenuButton
       class="w-full flex items-center justify-center"
-      :class="isExpanded ? 'xl:bg-gray-800 xl:justify-start' : ''"
+      :class="isExpanded ? 'xl:border-b xl:border-gray-400 xl:justify-start' : ''"
       :as="isExpanded ? 'div' : 'button'"
     >
       <span :class="isExpanded ? 'xl:p-2' : ''">
@@ -34,8 +34,8 @@
         :static="isExpanded"
       >
         <ul
-          class="divide-y divide-gray-400 bg-gray-700 max-w-[300px] min-w-[200px] ml-2"
-          :class="isExpanded ? 'xl:w-full xl:ml-0' : ''"
+          class="border border-gray-400 divide-y divide-gray-400 bg-gray-300 max-w-[300px] min-w-[200px] ml-2"
+          :class="isExpanded ? 'xl:w-full xl:ml-0 xl:border-0 xl:divide-y-0' : ''"
         >
           <MenuItem
             v-for="link in links"
@@ -43,10 +43,11 @@
           >
             <li
               class="transition"
-              :class="$page.url === absoluteLink(link.slug) ? 'bg-gray-500' : 'hover:bg-gray-600'"
+              :class="currentPage === absoluteLink(link.slug) ? 'bg-slate-300' : 'hover:bg-slate-300'"
             >
               <Link
-                class="block p-2 flex items-center"
+                class="block p-2 flex items-center xl:text-gray-600"
+                :class="isExpanded ? 'xl:pl-2' : ''"
                 :href="absoluteLink(link.slug)"
               >
                 <div
@@ -118,6 +119,10 @@ export default defineComponent({
   },
 
   computed: {
+    currentPage(): string {
+      return window.location.pathname;
+    },
+
     isExpanded(): boolean {
       if (this.isLt('xl')) {
         return false;
@@ -128,18 +133,16 @@ export default defineComponent({
 
     wrapperClasses(): string[] {
       const classes: string[] = [
-        'bg-gray-800',
         'rounded',
         'w-10',
         'h-10',
         'border',
-        'border-gray-800',
-        'hover:bg-gray-700',
+        'border-gray-400',
         'flex',
         'items-center',
         'justify-center',
-        'text-gray-400',
-        'hover:text-gray-200',
+        'text-gray-700',
+        'hover:text-gray-900',
         'transition',
         'relative',
       ];
@@ -147,9 +150,9 @@ export default defineComponent({
       if (this.isExpanded) {
         classes.push(
           'xl:w-full',
-          'xl:text-gray-200',
           'xl:flex-col',
           'xl:h-auto',
+          'xl:border-0',
         );
       }
 

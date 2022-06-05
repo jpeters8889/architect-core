@@ -1,7 +1,7 @@
 <template>
-  <header class="bg-white w-full shadow-lg h10 flex">
+  <header class="bg-white w-full shadow-lg h-14 flex shadow-2xl">
     <div
-      class="hidden xl:flex w-10 h-10 bg-gray-900 text-white justify-center items-center cursor-pointer"
+      class="hidden xl:flex w-14 h-14 bg-gray-300 text-white justify-center items-center cursor-pointer text-gray-700"
       @click="toggleNavigation()"
     >
       <component

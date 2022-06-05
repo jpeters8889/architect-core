@@ -241,4 +241,26 @@ class ListServiceTest extends TestCase
 
         $this->assertSame($user2->id, $items[0]['id']);
     }
+
+    /** @test */
+    public function itHasAMetaPropertyInEachItem(): void
+    {
+        UserFactory::new()->count(15)->create();
+
+        $this->listService->load();
+        $items = $this->listService->data()['items'];
+
+        foreach ($items as $item) {
+            $this->assertArrayHasKey('$meta', $item);
+
+            $metas = $item['$meta'];
+
+            $this->assertArrayHasKey('canEdit', $metas);
+            $this->assertArrayHasKey('canDelete', $metas);
+            $this->assertArrayHasKey('isDeleted', $metas);
+            $this->assertArrayHasKey('canDuplicate', $metas);
+            $this->assertArrayHasKey('publicUrl', $metas);
+            $this->assertArrayHasKey('id', $metas);
+        }
+    }
 }

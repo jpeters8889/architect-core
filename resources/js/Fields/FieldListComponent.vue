@@ -18,7 +18,7 @@ export default {
     },
     value: {
       required: true,
-      type: [String, Number, Array, Object],
+      type: [String, Number, Boolean, Array, Object],
     },
   },
 };

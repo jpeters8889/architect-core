@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
 use Jpeters8889\Architect\Modules\Fields\TextField;
 use Jpeters8889\Architect\Tests\AppClasses\UserBlueprint;
+use Jpeters8889\Architect\Tests\Factories\UserFactory;
 use Jpeters8889\Architect\Tests\TestCase;
 
 class BlueprintTest extends TestCase
@@ -66,5 +67,46 @@ class BlueprintTest extends TestCase
 
         $this->assertEquals('created_at', $ordering[0]['column']);
         $this->assertEquals('desc', $ordering[0]['direction']);
+    }
+
+    /** @test */
+    public function itCanDetermineWhetherARowCanBeEdited(): void
+    {
+        $this->assertTrue($this->blueprint->canEdit(UserFactory::new()->create()));
+    }
+
+    /** @test */
+    public function itCanDetermineWhetherARowCanBeDuplicated(): void
+    {
+        $this->assertTrue($this->blueprint->canDuplicate(UserFactory::new()->create()));
+    }
+
+    /** @test */
+    public function itCanDetermineWhetherARowCanBeDeleted(): void
+    {
+        $this->assertTrue($this->blueprint->canDelete(UserFactory::new()->create()));
+    }
+
+    /** @test */
+    public function itCanDetermineWhetherAIsDeleted(): void
+    {
+        $model = UserFactory::new()->create();
+        $this->assertFalse($this->blueprint->isItemDeleted($model));
+    }
+
+    /** @test */
+    public function itCanGetThePublicUrlForAnItem(): void
+    {
+        $this->assertNull($this->blueprint->publicUrl(UserFactory::new()->create()));
+    }
+
+    /** @test */
+    public function itCanDeleteAModel(): void
+    {
+        $model = UserFactory::new()->create();
+
+        $this->blueprint->handleDelete($model);
+
+        $this->assertFalse($model->refresh()->exists);
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Jpeters8889\Architect\ArchitectCore;
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
+use Jpeters8889\Architect\Modules\Blueprints\DeletionService;
 use Jpeters8889\Architect\Modules\Blueprints\Exceptions\BlueprintNotFoundException;
 use Jpeters8889\Architect\Modules\Blueprints\ListService;
 use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
@@ -41,25 +42,44 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
     {
         $this->app->scoped(ListService::class, function (): ListService {
             try {
-                $blueprint = Route::current()?->parameter('blueprint');
-
-                throw_if(! $blueprint, new BindingResolutionException('Can only bind ListService when using a Blueprint'));
-
-                $concreteBlueprint = resolve(BlueprintRegistrar::class)->resolveFromSlug((string)$blueprint);
-
-                $listService = new ListService($concreteBlueprint);
-
-                /** @var int $page */
-                $page = Request::get('page');
-                $sorting = Request::has('sortItem') ? [Request::get('sortItem'), Request::get('sortDirection', 'asc')] : null;
-
-                $listService->load($page ?: null, $sorting);
-
-                return $listService;
+                return $this->instantiateListService();
             } catch (BlueprintNotFoundException $exception) {
                 abort(404);
             }
         });
+
+        $this->app->scoped(DeletionService::class, function (): DeletionService {
+            try {
+                return $this->instantiateDeletionService();
+            } catch (BlueprintNotFoundException $exception) {
+                abort(404);
+            }
+        });
+    }
+
+    protected function instantiateListService(): ListService
+    {
+        $concreteBlueprint = $this->resolveBlueprintFromSlug();
+
+        $listService = new ListService($concreteBlueprint);
+
+        /** @var int $page */
+        $page = Request::get('page');
+
+        /** @var array{string, 'asc' | 'desc'} | null $sorting */
+        $sorting = Request::has('sortItem') ? [Request::get('sortItem'), Request::get('sortDirection', 'asc')] : null;
+
+        $listService->load($page ?: null, $sorting);
+
+        return $listService;
+    }
+
+    protected function instantiateDeletionService(): DeletionService
+    {
+        $concreteBlueprint = $this->resolveBlueprintFromSlug();
+        $id = Request::route('id');
+
+        return new DeletionService($concreteBlueprint, $concreteBlueprint->query()->findOrFail($id));
     }
 
     /**
@@ -71,4 +91,13 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
      * @return class-string<AbstractBlueprint>[]
      */
     abstract protected function blueprints(): array;
+
+    protected function resolveBlueprintFromSlug(): AbstractBlueprint
+    {
+        $blueprint = Route::current()?->parameter('blueprint');
+
+        throw_if(! $blueprint, new BindingResolutionException('Can only bind when using a Blueprint'));
+
+        return resolve(BlueprintRegistrar::class)->resolveFromSlug((string)$blueprint);
+    }
 }
