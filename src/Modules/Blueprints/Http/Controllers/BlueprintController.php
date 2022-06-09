@@ -4,6 +4,7 @@ namespace Jpeters8889\Architect\Modules\Blueprints\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Jpeters8889\Architect\Modules\Blueprints\DeletionService;
@@ -27,13 +28,13 @@ class BlueprintController
     {
         $deletionService->handleDelete();
 
-        return back();
+        return back()->with('flash', ['type' => 'success', 'message' => 'Record deleted!', 'id' => Str::uuid()]);
     }
 
     public function restore(DeletionService $deletionService): RedirectResponse
     {
         $deletionService->handleRestore();
 
-        return back();
+        return back()->with('flash', ['type' => 'success', 'message' => 'Record restored!', 'id' => Str::uuid()]);
     }
 }

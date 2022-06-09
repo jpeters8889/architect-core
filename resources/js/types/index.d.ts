@@ -11,6 +11,13 @@ export type Navigation = {
   blueprints: { label: string, blueprints: NavigationChild[] }[];
 };
 
+export type Flash = {
+  id: string;
+  type: 'success' | 'error';
+  message: string;
+  show?: boolean;
+};
+
 export type NavigationChild = {
   label: string;
   slug: string;

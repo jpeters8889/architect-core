@@ -48,4 +48,11 @@ class BlueprintDeleteTest extends FeatureTestCase
         $this->delete('/architect/blueprint/users/1')->assertRedirect();
         $this->put('/architect/blueprint/users/1')->assertRedirect();
     }
+
+    /** @test */
+    public function itHasAFlashMessageInTheResponse(): void
+    {
+        $this->delete('/architect/blueprint/users/1')->assertSessionHas('flash');
+        $this->put('/architect/blueprint/users/1')->assertSessionHas('flash');
+    }
 }

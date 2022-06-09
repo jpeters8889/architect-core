@@ -40,6 +40,7 @@ class HandleInertiaRequests extends Middleware
         return array_merge(parent::share($request), [
             'basePath' => config('architect.base_path'),
             'navigation' => $this->navigation(),
+            'flash' => fn () => $request->hasSession() ? $request->session()->get('flash') : null,
         ]);
     }
 

@@ -21,6 +21,8 @@
       </div>
     </div>
   </div>
+
+  <FlashMessageContainer :flash="flash" />
 </template>
 
 <script lang="ts">
@@ -28,18 +30,16 @@ import { defineComponent } from 'vue';
 import Header from './Components/Header.vue';
 import Sidebar from './Components/Sidebar.vue';
 import CardSkeleton from '../Components/CardSkeleton.vue';
-import { Navigation } from '../types';
+import { Flash, Navigation } from '../types';
+import FlashMessageContainer from './Components/FlashMessageContainer.vue';
 
 export default defineComponent({
   components: {
+    FlashMessageContainer,
     CardSkeleton,
     Sidebar,
     Header,
   },
-
-  data: () => ({
-    displayNav: true,
-  }),
 
   props: {
     navigation: {
@@ -50,6 +50,15 @@ export default defineComponent({
       required: true,
       type: String,
     },
+    flash: {
+      required: false,
+      type: Object as () => Flash,
+      default: null,
+    },
   },
+
+  data: () => ({
+    displayNav: true,
+  }),
 });
 </script>

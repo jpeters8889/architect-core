@@ -146,16 +146,20 @@ export default defineComponent({
     },
 
     buttonPressed(button: BlueprintTableButtonEvent, id: number | string) {
+      let safeId: string | number = id;
+
       if (typeof id === 'number') {
-        id = id.toString(10);
+        safeId = id.toString(10);
       }
 
       switch (button) {
         case 'delete':
-          return Inertia.delete(`${window.location.pathname}/${id}`, { preserveScroll: true });
+          return Inertia.delete(`${window.location.pathname}/${safeId}`, { preserveScroll: true });
         case 'restore':
-          return Inertia.put(`${window.location.pathname}/${id}`, { preserveScroll: true });
+          return Inertia.put(`${window.location.pathname}/${safeId}`, {}, { preserveScroll: true });
       }
+
+      return false;
     },
   },
 });

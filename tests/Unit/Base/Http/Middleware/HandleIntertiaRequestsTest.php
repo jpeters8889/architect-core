@@ -29,4 +29,14 @@ class HandleIntertiaRequestsTest extends TestCase
         $this->assertArrayHasKey('basePath', $sharedData);
         $this->assertEquals('architect', $sharedData['basePath']);
     }
+
+    /** @test */
+    public function itHasTheFlashObjectInTheSharedObject(): void
+    {
+        $middleware = resolve(HandleInertiaRequests::class);
+
+        $sharedData = $middleware->share(request());
+
+        $this->assertArrayHasKey('flash', $sharedData);
+    }
 }
