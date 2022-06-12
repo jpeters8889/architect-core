@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
+use Jpeters8889\Architect\Modules\Blueprints\CreationService;
 use Jpeters8889\Architect\Modules\Blueprints\DeletionService;
 use Jpeters8889\Architect\Modules\Blueprints\ListService;
 
@@ -21,6 +22,14 @@ class BlueprintController
                 'column' => $request->get('sortItem', $listService->blueprint()->orderBy()[0]),
                 'direction' => $request->get('sortDirection', $listService->blueprint()->orderBy()[1]),
             ],
+        ]);
+    }
+
+    public function create(CreationService $creationService): Response
+    {
+        return Inertia::render('Blueprint/Create', [
+            'metas' => $creationService->metas(),
+            'fields' => $creationService->formFields(),
         ]);
     }
 

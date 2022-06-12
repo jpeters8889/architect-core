@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Jpeters8889\Architect\ArchitectCore;
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
+use Jpeters8889\Architect\Modules\Blueprints\CreationService;
 use Jpeters8889\Architect\Modules\Blueprints\DeletionService;
 use Jpeters8889\Architect\Modules\Blueprints\Exceptions\BlueprintNotFoundException;
 use Jpeters8889\Architect\Modules\Blueprints\ListService;
@@ -40,6 +41,14 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
 
     protected function prepareInjectableDependencies(): void
     {
+        $this->app->scoped(CreationService::class, function (): CreationService {
+            try {
+                return $this->instantiateCreationService();
+            } catch (BlueprintNotFoundException $exception) {
+                abort(404);
+            }
+        });
+
         $this->app->scoped(ListService::class, function (): ListService {
             try {
                 return $this->instantiateListService();
@@ -72,6 +81,13 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
         $listService->load($page ?: null, $sorting);
 
         return $listService;
+    }
+
+    protected function instantiateCreationService(): CreationService
+    {
+        $concreteBlueprint = $this->resolveBlueprintFromSlug();
+
+        return new CreationService($concreteBlueprint);
     }
 
     protected function instantiateDeletionService(): DeletionService

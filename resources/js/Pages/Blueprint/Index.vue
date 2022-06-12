@@ -1,71 +1,81 @@
 <template>
-  <div class="flex flex-col space-y-5 justify-between items-center overflow-hidden">
-    <div class="w-full flex justify-between items-center p-2 xl:p-4">
-      <div>
-        <h1 class="text-xl font-semibold">
-          {{ metas.title }}
-        </h1>
-      </div>
+  <div class="w-full flex justify-between items-center mb-2 xl:mb-4">
+    <div>
+      <h1 class="text-xl font-semibold">
+        {{ metas.title }}
+      </h1>
     </div>
 
-    <div class="w-full">
-      <TableWrapper>
-        <template #header>
-          <TableHeaderRow>
-            <TableHeaderCell
-              v-for="header in metas.headers"
-              :key="header.column"
-            >
-              <div class="flex justify-between items-center">
-                <span>{{ header.label }}</span>
-
-                <Sorter
-                  v-if="header.sortable"
-                  :column="header.column"
-                  :current-sort="currentSort"
-                  class="ml-2"
-                  @sort-change="sortChange"
-                />
-              </div>
-            </TableHeaderCell>
-
-            <TableHeaderCell />
-          </TableHeaderRow>
-        </template>
-
-        <TableRow
-          v-for="row in data.items"
-          :key="row.id"
-          class="divide-x divide-gray-300 leading-none text-sm even:bg-gray-100 hover:bg-blue-100 transition"
-        >
-          <TableCell
-            v-for="header in metas.headers"
-            :key="header.column"
-          >
-            <FieldListComponent
-              :value="row[header.column]"
-              :component="header.component"
-            />
-          </TableCell>
-
-          <TableCell>
-            <TableButtons
-              :settings="row.$meta"
-              @button-press="buttonPressed"
-            />
-          </TableCell>
-        </TableRow>
-      </TableWrapper>
-    </div>
-
-    <div class="w-full pb-3">
-      <Paginator
-        :current-page="data.currentPage"
-        :number-of-pages="data.numberOfPages"
-        @go-to-page="goToPage"
+    <div>
+      <FormButton
+        as="Link"
+        :to="createRoute"
+        :label="`Create ${metas.singularTitle}`"
       />
     </div>
   </div>
+
+  <CardSkeleton>
+    <div class="flex flex-col space-y-5 justify-between items-center overflow-hidden">
+      <div class="w-full">
+        <TableWrapper>
+          <template #header>
+            <TableHeaderRow>
+              <TableHeaderCell
+                v-for="header in metas.headers"
+                :key="header.column"
+              >
+                <div class="flex justify-between items-center">
+                  <span>{{ header.label }}</span>
+
+                  <Sorter
+                    v-if="header.sortable"
+                    :column="header.column"
+                    :current-sort="currentSort"
+                    class="ml-2"
+                    @sort-change="sortChange"
+                  />
+                </div>
+              </TableHeaderCell>
+
+              <TableHeaderCell />
+            </TableHeaderRow>
+          </template>
+
+          <TableRow
+            v-for="row in data.items"
+            :key="row.id"
+            class="divide-x divide-gray-300 leading-none text-sm even:bg-gray-100 hover:bg-blue-100 transition"
+          >
+            <TableCell
+              v-for="header in metas.headers"
+              :key="header.column"
+            >
+              <FieldListComponent
+                :value="row[header.column]"
+                :component="header.component"
+              />
+            </TableCell>
+
+            <TableCell>
+              <TableButtons
+                :settings="row.$meta"
+                @button-press="buttonPressed"
+              />
+            </TableCell>
+          </TableRow>
+        </TableWrapper>
+      </div>
+
+      <div class="w-full pb-3">
+        <Paginator
+          :current-page="data.currentPage"
+          :number-of-pages="data.numberOfPages"
+          @go-to-page="goToPage"
+        />
+      </div>
+    </div>
+  </CardSkeleton>
 </template>
 
 <script lang="ts">
@@ -88,9 +98,12 @@ import TableHeaderRow from '../../Components/Table/TableHeaderRow.vue';
 import TableHeaderCell from '../../Components/Table/TableHeaderCell.vue';
 import TableCell from '../../Components/Table/TableCell.vue';
 import TableButtons from '../../Components/Blueprints/TableButtons.vue';
+import CardSkeleton from '../../Components/CardSkeleton.vue';
+import FormButton from '../../Components/Forms/FormButton.vue';
 
 export default defineComponent({
   components: {
+    CardSkeleton,
     TableButtons,
     TableCell,
     TableHeaderCell,
@@ -100,6 +113,7 @@ export default defineComponent({
     Sorter,
     Paginator,
     FieldListComponent,
+    FormButton,
   },
 
   layout: Architect,
@@ -122,6 +136,10 @@ export default defineComponent({
   data: (): { queryStringParameters: BlueprintTableQueryStringParameters } => ({
     queryStringParameters: {} as BlueprintTableQueryStringParameters,
   }),
+
+  computed: {
+    createRoute: () => `${window.location.pathname}/create`,
+  },
 
   mounted() {
     this.queryStringParameters = {

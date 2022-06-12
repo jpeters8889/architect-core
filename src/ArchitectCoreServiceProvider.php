@@ -3,7 +3,6 @@
 namespace Jpeters8889\Architect;
 
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Jpeters8889\Architect\Base\Http\Middleware\HandleInertiaRequests;
@@ -43,8 +42,11 @@ final class ArchitectCoreServiceProvider extends PackageServiceProvider
             config(['architect.base_path' => $basePath]);
 
             Route::prefix($basePath)
-                ->middleware(array_merge($baseMiddleware, [StartSession::class, HandleInertiaRequests::class]))
-                ->group(__DIR__ . '/../routes/architect.php');
+                ->middleware('web')
+                ->group(function () use ($baseMiddleware) {
+                    Route::middleware(array_merge($baseMiddleware, [HandleInertiaRequests::class]))
+                        ->group(__DIR__ . '/../routes/architect.php');
+                });
         });
 
         return $this;

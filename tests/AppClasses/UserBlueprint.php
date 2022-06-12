@@ -28,7 +28,9 @@ class UserBlueprint extends AbstractBlueprint
 
             Checkbox::make('active')->isSortable(),
 
-            DateTime::make('created_at')->isSortable(),
+            DateTime::make('created_at')
+                ->tableOnly()
+                ->isSortable(),
         ];
     }
 

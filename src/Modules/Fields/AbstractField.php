@@ -16,7 +16,13 @@ abstract class AbstractField
 
     protected bool $displayOnTable = true;
 
+    protected bool $displayOnForm = true;
+
     protected bool $sortable = false;
+
+    protected array $formValidationRules = [];
+
+    protected ?string $formHelpText = null;
 
     final public function __construct(protected string $column, string $label = null)
     {
@@ -95,9 +101,31 @@ abstract class AbstractField
         return $this;
     }
 
+    public function formOnly(): static
+    {
+        return $this->hideOnTable();
+    }
+
+    public function hideOnForm(): static
+    {
+        $this->displayOnForm = false;
+
+        return $this;
+    }
+
+    public function tableOnly(): static
+    {
+        return $this->hideOnForm();
+    }
+
     public function shouldDisplayOnTable(): bool
     {
         return $this->displayOnTable;
+    }
+
+    public function shouldDisplayOnForm(): bool
+    {
+        return $this->displayOnForm;
     }
 
     public function component(): string
@@ -115,5 +143,36 @@ abstract class AbstractField
         $this->sortable = true;
 
         return $this;
+    }
+
+    public function required(): static
+    {
+        $this->formValidationRules = array_merge(['required'], $this->formValidationRules);
+
+        return $this;
+    }
+
+    public function validationRules(array $rules): static
+    {
+        $this->formValidationRules = $rules;
+
+        return $this;
+    }
+
+    public function getValidationRules(): array
+    {
+        return $this->formValidationRules;
+    }
+
+    public function formHelpText(string $text): static
+    {
+        $this->formHelpText = $text;
+
+        return $this;
+    }
+
+    public function getFormHelpText(): ?string
+    {
+        return $this->formHelpText;
     }
 }

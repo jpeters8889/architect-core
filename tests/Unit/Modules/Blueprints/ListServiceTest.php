@@ -101,6 +101,15 @@ class ListServiceTest extends TestCase
     }
 
     /** @test */
+    public function itReturnsTheBlueprintSingularTitleInTheMetas(): void
+    {
+        $metas = $this->listService->metas();
+
+        $this->assertArrayHasKey('singularTitle', $metas);
+        $this->assertEquals('User', $metas['singularTitle']);
+    }
+
+    /** @test */
     public function itReturnsTheFormattedHeaderInformationInTheMetas(): void
     {
         $metas = $this->listService->metas();

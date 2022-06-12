@@ -6,6 +6,9 @@ use Jpeters8889\Architect\Modules\Blueprints\Http\Controllers\BlueprintControlle
 
 Route::get('/', LandingPageController::class);
 
-Route::get('blueprint/{blueprint}', [BlueprintController::class, 'list']);
-Route::delete('blueprint/{blueprint}/{id}', [BlueprintController::class, 'delete']);
-Route::put('blueprint/{blueprint}/{id}', [BlueprintController::class, 'restore']);
+Route::prefix('blueprint/{blueprint}')->group(function () {
+    Route::get('/', [BlueprintController::class, 'list']);
+    Route::get('create', [BlueprintController::class, 'create']);
+    Route::delete('{id}', [BlueprintController::class, 'delete']);
+    Route::put('{id}', [BlueprintController::class, 'restore']);
+});

@@ -13,10 +13,8 @@
       />
 
       <div class="w-full overflow-hidden">
-        <div class="p-4 flex-1">
-          <CardSkeleton>
-            <slot />
-          </CardSkeleton>
+        <div class="p-2 xl:p-4 flex-1">
+          <slot />
         </div>
       </div>
     </div>

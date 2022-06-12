@@ -84,4 +84,24 @@ abstract class FieldTestCase extends TestCase
 
         $this->assertTrue($field->sortable());
     }
+
+    /** @test */
+    public function itCanSetATableToHideOnTabularViews(): void
+    {
+        $username = $this->makeField('username')->hideOnTable();
+        $email = $this->makeField('email')->formOnly();
+
+        $this->assertFalse($username->shouldDisplayOnTable());
+        $this->assertFalse($email->shouldDisplayOnTable());
+    }
+
+    /** @test */
+    public function itCanSetATableToHideOnFormViews(): void
+    {
+        $username = $this->makeField('username')->hideOnForm();
+        $email = $this->makeField('email')->tableOnly();
+
+        $this->assertFalse($username->shouldDisplayOnForm());
+        $this->assertFalse($email->shouldDisplayOnForm());
+    }
 }

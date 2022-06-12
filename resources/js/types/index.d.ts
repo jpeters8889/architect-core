@@ -23,8 +23,12 @@ export type NavigationChild = {
   slug: string;
 };
 
-export type BlueprintTableMetaSet = {
+export type BlueprintMetaSet = {
   title: string;
+  singularTitle: string;
+};
+
+export type BlueprintTableMetaSet = BlueprintMetaSet & {
   headers: {
     label: string;
     column: string;
@@ -65,5 +69,12 @@ export type BlueprintTableQueryStringParameters = {
 };
 
 export type BlueprintTableButtonEvent = 'delete' | 'restore' | 'edit' | 'open' | 'duplicate';
+
+export type BlueprintFormField = {
+  label: string;
+  component: string;
+  rules: string[];
+  helpText?: string[];
+};
 
 export type PaginationData = { label: string, goTo: number }[];
