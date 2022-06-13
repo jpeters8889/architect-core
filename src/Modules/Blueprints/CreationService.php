@@ -3,6 +3,7 @@
 namespace Jpeters8889\Architect\Modules\Blueprints;
 
 use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
 use Jpeters8889\Architect\Modules\Blueprints\DTO\BlueprintFormField;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 
@@ -22,6 +23,7 @@ class CreationService extends BlueprintDisplayService
     {
         return $this->fields->map(function (AbstractField $field) {
             return new BlueprintFormField(
+                id: Str::slug($field->label()),
                 label: $field->label(),
                 component: $field->component(),
                 helpText: $field->getFormHelpText(),

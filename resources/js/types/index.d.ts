@@ -71,10 +71,11 @@ export type BlueprintTableQueryStringParameters = {
 export type BlueprintTableButtonEvent = 'delete' | 'restore' | 'edit' | 'open' | 'duplicate';
 
 export type BlueprintFormField = {
+  id: string;
   label: string;
   component: string;
   rules: string[];
-  helpText?: string[];
+  helpText?: string;
 };
 
 export type PaginationData = { label: string, goTo: number }[];
