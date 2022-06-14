@@ -3,6 +3,7 @@
     :is="component"
     :id="id"
     :value="modelValue"
+    :rules="rules"
     @change="handleChange"
   />
 </template>
@@ -27,6 +28,11 @@ export default defineComponent({
       required: false,
       type: [String, Number, Boolean],
       default: null,
+    },
+    rules: {
+      required: false,
+      type: Array as () => string[],
+      default: () => [],
     },
   },
 

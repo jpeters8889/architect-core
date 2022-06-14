@@ -1,19 +1,23 @@
 <template>
-  <div class="flex flex-col">
-    <label
-      v-if="label"
-      :for="id"
-      class="text-gray-500 font-light tracking-wide text-sm"
-      v-text="label"
-    />
+  <div class="flex flex-col space-y-2 py-2 lg:flex-row lg:space-y-0">
+    <div class="flex flex-col space-y-2 lg:w-1/4 lg:max-width-[300px]">
+      <label
+        v-if="label"
+        :for="id"
+        class="text-gray-500 font-light tracking-wide text-sm lg:text-base"
+        v-text="label"
+      />
 
-    <small
-      v-if="helpText"
-      class="text-xs font-gray-300 tracking-wide"
-      v-text="helpText"
-    />
+      <small
+        v-if="helpText"
+        class="text-xs font-gray-300 tracking-wide"
+        v-text="helpText"
+      />
+    </div>
 
-    <slot />
+    <div class="lg:flex-1 lg:max-w-[900px]">
+      <slot />
+    </div>
   </div>
 </template>
 

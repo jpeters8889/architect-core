@@ -8,23 +8,26 @@
   </div>
 
   <CardSkeleton>
-    <div class="flex flex-col space-y-5 justify-between items-center overflow-hidden">
-      <div class="w-full p-2 xl:p-4 flex flex-col space-y-4 divide-y divide-gray-300">
-        <FormField
-          v-for="field in fields"
-          :id="field.id"
-          :key="field.id"
-          :label="field.label"
-          :help-text="field.helpText"
-        >
-          <FieldFormComponent
+    <form>
+      <div class="flex flex-col space-y-5 justify-between items-center overflow-hidden">
+        <div class="w-full p-2 xl:p-4 flex flex-col divide-y divide-gray-300">
+          <FormField
+            v-for="field in fields"
             :id="field.id"
-            v-model="form[field.id]"
-            :component="field.component"
-          />
-        </FormField>
+            :key="field.id"
+            :label="field.label"
+            :help-text="field.helpText"
+          >
+            <FieldFormComponent
+              :id="field.id"
+              v-model="form[field.id]"
+              :component="field.component"
+              :rules="field.rules"
+            />
+          </FormField>
+        </div>
       </div>
-    </div>
+    </form>
   </CardSkeleton>
 </template>
 
