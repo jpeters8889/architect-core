@@ -7,13 +7,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use Jpeters8889\Architect\Modules\Blueprints\CreationService;
-use Jpeters8889\Architect\Modules\Blueprints\DeletionService;
-use Jpeters8889\Architect\Modules\Blueprints\ListService;
+use Jpeters8889\Architect\Modules\Blueprints\Http\Requests\CreateItemRequest;
+use Jpeters8889\Architect\Modules\Blueprints\Processors\CreateNewProcessor;
+use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
+use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
+use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
 
 class BlueprintController
 {
-    public function list(ListService $listService, Request $request): Response
+    public function index(ListService $listService, Request $request): Response
     {
         return Inertia::render('Blueprint/Index', [
             'metas' => $listService->metas(),
@@ -25,7 +27,7 @@ class BlueprintController
         ]);
     }
 
-    public function create(CreationService $creationService): Response
+    public function create(CreationFormService $creationService): Response
     {
         return Inertia::render('Blueprint/Create', [
             'metas' => $creationService->metas(),
@@ -33,7 +35,22 @@ class BlueprintController
         ]);
     }
 
-    public function delete(DeletionService $deletionService): RedirectResponse
+    public function store(CreateItemRequest $request, CreateNewProcessor $processor): void
+    {
+        //
+    }
+
+    public function show(): void
+    {
+        //
+    }
+
+    public function update(): void
+    {
+        //
+    }
+
+    public function destroy(DeletionService $deletionService): RedirectResponse
     {
         $deletionService->handleDelete();
 

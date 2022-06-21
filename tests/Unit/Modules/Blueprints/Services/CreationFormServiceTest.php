@@ -1,22 +1,22 @@
 <?php
 
-namespace Jpeters8889\Architect\Tests\Unit\Modules\Blueprints;
+namespace Jpeters8889\Architect\Tests\Unit\Modules\Blueprints\Services;
 
 use Illuminate\Support\Collection;
-use Jpeters8889\Architect\Modules\Blueprints\CreationService;
 use Jpeters8889\Architect\Modules\Blueprints\DTO\BlueprintFormField;
+use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
 use Jpeters8889\Architect\Tests\AppClasses\UserBlueprint;
 use Jpeters8889\Architect\Tests\TestCase;
 
-class CreateServiceTest extends TestCase
+class CreationFormServiceTest extends TestCase
 {
-    protected CreationService $creationService;
+    protected CreationFormService $creationService;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->creationService = new CreationService(new UserBlueprint());
+        $this->creationService = new CreationFormService(new UserBlueprint());
     }
 
     /** @test */

@@ -45,7 +45,7 @@
         "no-param-reassign": "off",
         "vue/no-v-html": "off",
         "class-methods-use-this": "off",
-        "max-len": ["error", { "code": 140 }],
+        "max-len": ["error", { "code": 155 }],
         "vue/multi-word-component-names": "off",
         "vue/max-len": [
             "error",

@@ -175,4 +175,9 @@ abstract class AbstractField
     {
         return $this->formHelpText;
     }
+
+    public function metaData(): array
+    {
+        return [];
+    }
 }

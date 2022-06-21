@@ -7,8 +7,9 @@ use Jpeters8889\Architect\Modules\Blueprints\Http\Controllers\BlueprintControlle
 Route::get('/', LandingPageController::class);
 
 Route::prefix('blueprint/{blueprint}')->group(function () {
-    Route::get('/', [BlueprintController::class, 'list']);
+    Route::get('/', [BlueprintController::class, 'index']);
     Route::get('create', [BlueprintController::class, 'create']);
-    Route::delete('{id}', [BlueprintController::class, 'delete']);
+    Route::post('/', [BlueprintController::class, 'store']);
+    Route::delete('{id}', [BlueprintController::class, 'destroy']);
     Route::put('{id}', [BlueprintController::class, 'restore']);
 });

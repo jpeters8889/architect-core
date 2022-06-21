@@ -5,6 +5,7 @@ namespace Jpeters8889\Architect\Modules\Blueprints;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 
 class Paginator extends LengthAwarePaginator

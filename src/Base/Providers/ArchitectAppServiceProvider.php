@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Jpeters8889\Architect\ArchitectCore;
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
-use Jpeters8889\Architect\Modules\Blueprints\CreationService;
-use Jpeters8889\Architect\Modules\Blueprints\DeletionService;
 use Jpeters8889\Architect\Modules\Blueprints\Exceptions\BlueprintNotFoundException;
-use Jpeters8889\Architect\Modules\Blueprints\ListService;
 use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
+use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
+use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
+use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
 use Jpeters8889\Architect\Modules\Dashboards\AbstractDashboard;
 use Jpeters8889\Architect\Modules\Dashboards\Registrar as DashboardRegistrar;
 
@@ -41,7 +41,7 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
 
     protected function prepareInjectableDependencies(): void
     {
-        $this->app->scoped(CreationService::class, function (): CreationService {
+        $this->app->scoped(CreationFormService::class, function (): CreationFormService {
             try {
                 return $this->instantiateCreationService();
             } catch (BlueprintNotFoundException $exception) {
@@ -83,11 +83,11 @@ abstract class ArchitectAppServiceProvider extends ServiceProvider
         return $listService;
     }
 
-    protected function instantiateCreationService(): CreationService
+    protected function instantiateCreationService(): CreationFormService
     {
         $concreteBlueprint = $this->resolveBlueprintFromSlug();
 
-        return new CreationService($concreteBlueprint);
+        return new CreationFormService($concreteBlueprint);
     }
 
     protected function instantiateDeletionService(): DeletionService

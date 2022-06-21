@@ -1,13 +1,12 @@
 <?php
 
-namespace Jpeters8889\Architect\Modules\Blueprints;
+namespace Jpeters8889\Architect\Modules\Blueprints\Services;
 
 use Illuminate\Support\Collection;
-use Illuminate\Support\Str;
 use Jpeters8889\Architect\Modules\Blueprints\DTO\BlueprintFormField;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 
-class CreationService extends BlueprintDisplayService
+class CreationFormService extends BlueprintDisplayService
 {
     /**
      * @param Collection<int, AbstractField> $fields
@@ -23,11 +22,12 @@ class CreationService extends BlueprintDisplayService
     {
         return $this->fields->map(function (AbstractField $field) {
             return new BlueprintFormField(
-                id: Str::slug($field->label()),
+                id: $field->column(),
                 label: $field->label(),
                 component: $field->component(),
                 helpText: $field->getFormHelpText(),
                 rules: $field->getValidationRules(),
+                meta: $field->metaData(),
             );
         });
     }

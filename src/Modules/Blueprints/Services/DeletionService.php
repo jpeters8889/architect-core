@@ -1,8 +1,9 @@
 <?php
 
-namespace Jpeters8889\Architect\Modules\Blueprints;
+namespace Jpeters8889\Architect\Modules\Blueprints\Services;
 
 use Illuminate\Database\Eloquent\Model;
+use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
 
 class DeletionService
 {

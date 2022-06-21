@@ -1,12 +1,12 @@
 <?php
 
-namespace Jpeters8889\Architect\Tests\Unit\Modules\Blueprints;
+namespace Jpeters8889\Architect\Tests\Unit\Modules\Blueprints\Services;
 
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use Jpeters8889\Architect\Modules\Blueprints\ListService;
 use Jpeters8889\Architect\Modules\Blueprints\Paginator;
+use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
 use Jpeters8889\Architect\Tests\AppClasses\UserBlueprint;
 use Jpeters8889\Architect\Tests\Factories\UserFactory;
 use Jpeters8889\Architect\Tests\TestCase;

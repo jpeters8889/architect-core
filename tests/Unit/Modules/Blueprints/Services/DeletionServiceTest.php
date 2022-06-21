@@ -1,8 +1,8 @@
 <?php
 
-namespace Jpeters8889\Architect\Tests\Unit\Modules\Blueprints;
+namespace Jpeters8889\Architect\Tests\Unit\Modules\Blueprints\Services;
 
-use Jpeters8889\Architect\Modules\Blueprints\DeletionService;
+use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
 use Jpeters8889\Architect\Tests\AppClasses\Models\User;
 use Jpeters8889\Architect\Tests\AppClasses\UserBlueprint;
 use Jpeters8889\Architect\Tests\Factories\UserFactory;

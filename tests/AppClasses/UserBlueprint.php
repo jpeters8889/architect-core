@@ -18,15 +18,15 @@ class UserBlueprint extends AbstractBlueprint
     public function fields(): array
     {
         return [
-            TextField::make('id', 'ID'),
+            TextField::make('id', 'ID')->tableOnly(),
 
-            TextField::make('username'),
+            TextField::make('username')->validationRules(['required', 'unique:users']),
 
-            TextField::make('email', 'Email Address'),
+            TextField::make('email', 'Email Address')->validationRules(['required', 'email', 'unique:users']),
 
-            TextField::make('password')->hideOnTable(),
+            TextField::make('password')->hideOnTable()->required(),
 
-            Checkbox::make('active')->isSortable(),
+            Checkbox::make('active')->isSortable()->validationRules(['required', 'bool']),
 
             DateTime::make('created_at')
                 ->tableOnly()

@@ -3,7 +3,7 @@
 namespace Jpeters8889\Architect\Tests\Features\Modules\Blueprints\Http;
 
 use Inertia\Testing\AssertableInertia as Assert;
-use Jpeters8889\Architect\Modules\Blueprints\ListService;
+use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
 use Jpeters8889\Architect\Tests\AppClasses\UserBlueprint;
 use Jpeters8889\Architect\Tests\FeatureTestCase;
 

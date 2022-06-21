@@ -4,6 +4,7 @@
     :id="id"
     :value="modelValue"
     :rules="rules"
+    :meta="meta"
     @change="handleChange"
   />
 </template>
@@ -33,6 +34,11 @@ export default defineComponent({
       required: false,
       type: Array as () => string[],
       default: () => [],
+    },
+    meta: {
+      required: false,
+      type: Object as () => { [K: string]: any },
+      default: () => {},
     },
   },
 

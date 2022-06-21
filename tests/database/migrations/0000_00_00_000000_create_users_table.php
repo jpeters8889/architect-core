@@ -14,6 +14,7 @@ class CreateUsersTable extends Migration
             $table->string('username');
             $table->string('password');
             $table->boolean('active');
+            $table->integer('level');
             $table->timestamps();
         });
     }

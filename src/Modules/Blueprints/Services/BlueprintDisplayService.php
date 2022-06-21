@@ -1,9 +1,10 @@
 <?php
 
-namespace Jpeters8889\Architect\Modules\Blueprints;
+namespace Jpeters8889\Architect\Modules\Blueprints\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 
 abstract class BlueprintDisplayService

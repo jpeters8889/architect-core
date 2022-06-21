@@ -1,9 +1,10 @@
 <?php
 
-namespace Jpeters8889\Architect\Modules\Blueprints;
+namespace Jpeters8889\Architect\Modules\Blueprints\Services;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Jpeters8889\Architect\Modules\Blueprints\Paginator;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 
 class ListService extends BlueprintDisplayService

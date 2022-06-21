@@ -76,6 +76,9 @@ export type BlueprintFormField = {
   component: string;
   rules: string[];
   helpText?: string;
+  meta?: { [K: string]: any },
 };
 
 export type PaginationData = { label: string, goTo: number }[];
+
+export type SelectBoxOption = { key: string | number | boolean, value: string };

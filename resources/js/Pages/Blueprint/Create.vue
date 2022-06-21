@@ -23,6 +23,7 @@
               v-model="form[field.id]"
               :component="field.component"
               :rules="field.rules"
+              :meta="field.meta"
             />
           </FormField>
         </div>

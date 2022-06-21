@@ -16,6 +16,11 @@ export default defineComponent({
       type: Array as () => string[],
       default: () => [],
     },
+    meta: {
+      required: false,
+      type: Object as () => { [K: string]: any },
+      default: () => {},
+    },
   },
 
   emits: ['change'],
