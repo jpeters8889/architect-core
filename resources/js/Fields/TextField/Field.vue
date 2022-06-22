@@ -6,7 +6,6 @@
       type="text"
       class="p-2 xl:p-4 placeholder-gray-300 text-gray-800 outline-0 ring-0 w-full"
       autocomplete="none"
-      :required="rules.includes('required')"
     >
   </div>
 </template>

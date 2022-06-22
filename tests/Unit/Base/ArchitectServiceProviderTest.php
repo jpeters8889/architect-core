@@ -4,7 +4,9 @@ namespace Jpeters8889\Architect\Tests\Unit\Base;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Jpeters8889\Architect\ArchitectCore;
+use Jpeters8889\Architect\Modules\Blueprints\Processors\CreateNewProcessor;
 use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
+use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
 use Jpeters8889\Architect\Modules\Dashboards\Registrar as DashboardRegistrar;
@@ -72,10 +74,26 @@ class ArchitectServiceProviderTest extends TestCase
     }
 
     /** @test */
+    public function itErrorsWhenTryingToGetABlueprintCreateFormServiceWhenNotOnABlueprintUrl(): void
+    {
+        $this->expectException(BindingResolutionException::class);
+
+        resolve(CreationFormService::class);
+    }
+
+    /** @test */
     public function itErrorsWhenTryingToGetABlueprintDeletionServiceWhenNotOnABlueprintUrl(): void
     {
         $this->expectException(BindingResolutionException::class);
 
         resolve(DeletionService::class);
+    }
+
+    /** @test */
+    public function itErrorsWhenTryingToGetABlueprintCreateNewProcessorWhenNotOnABlueprintUrl(): void
+    {
+        $this->expectException(BindingResolutionException::class);
+
+        resolve(CreateNewProcessor::class);
     }
 }

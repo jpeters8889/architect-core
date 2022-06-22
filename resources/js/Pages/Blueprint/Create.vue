@@ -8,7 +8,9 @@
   </div>
 
   <CardSkeleton>
-    <form>
+    <form
+      @submit.prevent="submitForm"
+    >
       <div class="flex flex-col space-y-5 justify-between items-center overflow-hidden">
         <div class="w-full p-2 xl:p-4 flex flex-col divide-y divide-gray-300">
           <FormField
@@ -26,6 +28,13 @@
               :meta="field.meta"
             />
           </FormField>
+
+          <div>
+            <FormButton
+              label="Create"
+              type="submit"
+            />
+          </div>
         </div>
       </div>
     </form>
@@ -35,14 +44,17 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { collect } from 'collect.js';
+import { InertiaFormProps } from '@inertiajs/inertia-vue3';
 import Architect from '../../Layouts/Architect.vue';
 import CardSkeleton from '../../Components/CardSkeleton.vue';
 import { BlueprintFormField, BlueprintTableMetaSet } from '../../types';
 import FormField from '../../Components/Forms/FormField.vue';
 import FieldFormComponent from '../../Fields/FieldFormComponent.vue';
+import FormButton from '../../Components/Forms/FormButton.vue';
 
 export default defineComponent({
   components: {
+    FormButton,
     FieldFormComponent,
     FormField,
     CardSkeleton,
@@ -61,9 +73,13 @@ export default defineComponent({
     },
   },
 
-  data: () => ({
+  data: (): { form?: InertiaFormProps<any> } => ({
     form: undefined,
   }),
+
+  computed: {
+    createRoute: () => window.location.pathname.replace('/create', ''),
+  },
 
   created() {
     this.buildForm();
@@ -75,6 +91,10 @@ export default defineComponent({
 
       // @ts-ignore
       this.form = this.$inertia.form(`create-${this.metas.singularTitle}`, mappedFormFields);
+    },
+
+    submitForm() {
+      this.form?.post(this.createRoute);
     },
   },
 });

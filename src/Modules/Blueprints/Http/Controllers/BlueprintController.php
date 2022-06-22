@@ -37,7 +37,6 @@ class BlueprintController
 
     public function store(CreateItemRequest $request, CreateNewProcessor $processor): void
     {
-        //
     }
 
     public function show(): void

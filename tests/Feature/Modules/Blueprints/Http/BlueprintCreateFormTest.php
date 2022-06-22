@@ -5,7 +5,7 @@ namespace Jpeters8889\Architect\Tests\Features\Modules\Blueprints\Http;
 use Inertia\Testing\AssertableInertia as Assert;
 use Jpeters8889\Architect\Tests\FeatureTestCase;
 
-class BlueprintCreateTest extends FeatureTestCase
+class BlueprintCreateFormTest extends FeatureTestCase
 {
     /** @test */
     public function itErrorsIfABlueprintDoesntExist(): void
