@@ -1,5 +1,8 @@
 <template>
-  <div class="border border-gray-300 rounded focus-within:border-gray-500 transition duration-300 overflow-hidden">
+  <div
+    class="border rounded transition duration-300 overflow-hidden"
+    :class="error ? 'border-red-500' : 'border-gray-300 focus-within:border-gray-500'"
+  >
     <input
       :id="id"
       v-model="newValue"
@@ -8,6 +11,12 @@
       autocomplete="new-password"
     >
   </div>
+
+  <span
+    v-if="error"
+    class="text-sm font-semibold text-red-500"
+    v-text="error"
+  />
 </template>
 
 <script>

@@ -4,8 +4,11 @@
     v-model="newValue"
   >
     <div
-      class="border border-gray-300 focus-within:border-gray-500 transition duration-300 relative"
-      :class="open ? 'rounded-t' : 'rounded'"
+      class="border transition duration-300 relative"
+      :class="[
+        open ? 'rounded-t' : 'rounded',
+        error ? 'border-red-500' : 'border-gray-300 focus-within:border-gray-500'
+      ]"
     >
       <ListboxButton class="relative w-full cursor-default py-2 pl-3 pr-10 text-left focus:outline-none sm:text-sm">
         <span class="block truncate">{{ selectValue }}</span>
@@ -47,6 +50,12 @@
       </transition>
     </div>
   </Listbox>
+
+  <span
+    v-if="error"
+    class="text-sm font-semibold text-red-500"
+    v-text="error"
+  />
 </template>
 
 <script lang="ts">

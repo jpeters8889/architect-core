@@ -26,6 +26,7 @@
               :component="field.component"
               :rules="field.rules"
               :meta="field.meta"
+              :error="form?.errors[field.id]"
             />
           </FormField>
 
@@ -90,7 +91,7 @@ export default defineComponent({
       const mappedFormFields = collect(this.fields).mapWithKeys((field: BlueprintFormField) => [field.id, null]);
 
       // @ts-ignore
-      this.form = this.$inertia.form(`create-${this.metas.singularTitle}`, mappedFormFields);
+      this.form = this.$inertia.form(`create-${this.metas.singularTitle}`, mappedFormFields.all());
     },
 
     submitForm() {

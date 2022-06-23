@@ -11,6 +11,11 @@ export default defineComponent({
       type: String,
       default: null,
     },
+    error: {
+      required: false,
+      type: String,
+      default: null,
+    },
     rules: {
       required: false,
       type: Array as () => string[],

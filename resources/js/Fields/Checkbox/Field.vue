@@ -1,5 +1,5 @@
 <template>
-  <div class="flex h-full items-center">
+  <div class="flex items-center">
     <Switch
       v-model="newValue"
       :class="newValue ? 'bg-gray-500 focus:ring-gray-900' : 'bg-gray-300 focus:ring-gray-500'"
@@ -11,6 +11,12 @@
       />
     </Switch>
   </div>
+
+  <span
+    v-if="error"
+    class="text-sm font-semibold text-red-500"
+    v-text="error"
+  />
 </template>
 
 <script>

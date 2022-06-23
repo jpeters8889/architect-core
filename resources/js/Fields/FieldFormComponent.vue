@@ -3,6 +3,7 @@
     :is="component"
     :id="id"
     :value="modelValue"
+    :error="error"
     :rules="rules"
     :meta="meta"
     @change="handleChange"
@@ -28,6 +29,11 @@ export default defineComponent({
     modelValue: {
       required: false,
       type: [String, Number, Boolean],
+      default: null,
+    },
+    error: {
+      required: false,
+      type: String,
       default: null,
     },
     rules: {
