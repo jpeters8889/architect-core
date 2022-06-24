@@ -38,6 +38,12 @@ export default defineComponent({
     newValue() {
       this.$emit('change', this.newValue);
     },
+
+    value() {
+      if (this.value !== this.newValue) {
+        this.newValue = this.value;
+      }
+    },
   },
 
   created() {

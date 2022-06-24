@@ -1,7 +1,11 @@
 <template>
   <component
     :is="as"
-    class="bg-gray-600 px-4 py-1 rounded text-gray-100 transition duration-200 hover:bg-gray-700 flex"
+    class="px-4 py-2 rounded transition duration-200 flex leading-none"
+    :class="[
+      theme === 'normal' ? 'bg-gray-600 text-gray-100 hover:bg-gray-700' : '',
+      theme === 'minor' ? 'bg-transparent text-gray-500 text-sm hover:text-gray-700 pb-1 pt-3 px-0' : '',
+    ]"
     v-bind="{...(to ? {href: to} : null)}"
   >
     {{ label }}
@@ -32,6 +36,12 @@ export default defineComponent({
       type: String,
       required: false,
       default: undefined,
+    },
+    theme: {
+      type: String,
+      required: false,
+      validator: (value: string) => ['normal', 'minor'].includes(value),
+      default: () => 'normal',
     },
   },
 });

@@ -10,6 +10,7 @@
   <CardSkeleton>
     <form
       @submit.prevent="submitForm"
+      @reset.prevent="resetForm"
     >
       <div class="flex flex-col space-y-5 justify-between items-center overflow-hidden">
         <div class="w-full p-2 xl:p-4 flex flex-col divide-y divide-gray-300">
@@ -30,16 +31,44 @@
             />
           </FormField>
 
-          <div>
-            <FormButton
-              label="Create"
-              type="submit"
-            />
+          <div class="flex justify-between items-bottom pt-2">
+            <div>
+              <FormButton
+                label="Reset"
+                type="reset"
+                theme="minor"
+              />
+            </div>
+            <div class="flex space-x-2">
+              <FormButton
+                label="Cancel"
+                theme="minor"
+                class="mr-4"
+              />
+
+              <FormButton
+                label="Create and add another"
+                type="submit"
+                @click="redirectBack = true"
+              />
+
+              <FormButton
+                :label="'Create '+ metas.singularTitle"
+                type="submit"
+                @click="redirectBack = false"
+              />
+            </div>
           </div>
         </div>
       </div>
     </form>
   </CardSkeleton>
+
+  <teleport to="body">
+    <ConfirmModal
+      :show="showConfirmationModal"
+    />
+  </teleport>
 </template>
 
 <script lang="ts">
@@ -52,9 +81,11 @@ import { BlueprintFormField, BlueprintTableMetaSet } from '../../types';
 import FormField from '../../Components/Forms/FormField.vue';
 import FieldFormComponent from '../../Fields/FieldFormComponent.vue';
 import FormButton from '../../Components/Forms/FormButton.vue';
+import ConfirmModal from '../../Components/ConfirmModal.vue';
 
 export default defineComponent({
   components: {
+    ConfirmModal,
     FormButton,
     FieldFormComponent,
     FormField,
@@ -74,8 +105,10 @@ export default defineComponent({
     },
   },
 
-  data: (): { form?: InertiaFormProps<any> } => ({
+  data: (): { form?: InertiaFormProps<any>, [T: string]: any } => ({
     form: undefined,
+    redirectBack: false,
+    showConfirmationModal: false,
   }),
 
   computed: {
@@ -95,7 +128,19 @@ export default defineComponent({
     },
 
     submitForm() {
-      this.form?.post(this.createRoute);
+      this.form?.post(`${this.createRoute}?redirectBack=${this.redirectBack}`);
+
+      this.redirectBack = false;
+    },
+
+    resetForm() {
+      this.showConfirmationModal = true;
+
+      // if (!confirm('Are you sure you want to reset this form?')) {
+      //   return;
+      // }
+      //
+      // this.form?.reset();
     },
   },
 });
