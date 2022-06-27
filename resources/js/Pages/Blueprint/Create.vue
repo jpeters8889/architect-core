@@ -11,6 +11,7 @@
     <form
       @submit.prevent="submitForm"
       @reset.prevent="resetForm"
+      @cancel.prevent="cancelForm"
     >
       <div class="flex flex-col space-y-5 justify-between items-center overflow-hidden">
         <div class="w-full p-2 xl:p-4 flex flex-col divide-y divide-gray-300">
@@ -44,6 +45,7 @@
                 label="Cancel"
                 theme="minor"
                 class="mr-4"
+                @click.prevent="cancelForm"
               />
 
               <FormButton
@@ -66,8 +68,26 @@
 
   <teleport to="body">
     <ConfirmModal
-      :show="showConfirmationModal"
-    />
+      :show="showResetConfirmationModal"
+      confirm-text="Yes, reset"
+      @cancel="showResetConfirmationModal = false"
+      @confirm="confirmReset"
+    >
+      <p class="text-sm text-gray-500">
+        Are you sure you want to reset this form? Your data will not be saved.
+      </p>
+    </ConfirmModal>
+
+    <ConfirmModal
+      :show="showCancelConfirmationModal"
+      confirm-text="Yes, cancel"
+      @cancel="showCancelConfirmationModal = false"
+      @confirm="confirmCancel"
+    >
+      <p class="text-sm text-gray-500">
+        Are you sure you want to cancel creating this {{ metas.singularTitle }}? Your data will not be saved.
+      </p>
+    </ConfirmModal>
   </teleport>
 </template>
 
@@ -81,7 +101,7 @@ import { BlueprintFormField, BlueprintTableMetaSet } from '../../types';
 import FormField from '../../Components/Forms/FormField.vue';
 import FieldFormComponent from '../../Fields/FieldFormComponent.vue';
 import FormButton from '../../Components/Forms/FormButton.vue';
-import ConfirmModal from '../../Components/ConfirmModal.vue';
+import ConfirmModal from '../../Components/Modals/ConfirmModal.vue';
 
 export default defineComponent({
   components: {
@@ -108,7 +128,8 @@ export default defineComponent({
   data: (): { form?: InertiaFormProps<any>, [T: string]: any } => ({
     form: undefined,
     redirectBack: false,
-    showConfirmationModal: false,
+    showResetConfirmationModal: false,
+    showCancelConfirmationModal: false,
   }),
 
   computed: {
@@ -134,13 +155,26 @@ export default defineComponent({
     },
 
     resetForm() {
-      this.showConfirmationModal = true;
+      this.showResetConfirmationModal = true;
+    },
 
-      // if (!confirm('Are you sure you want to reset this form?')) {
-      //   return;
-      // }
-      //
-      // this.form?.reset();
+    confirmReset() {
+      this.form?.reset();
+      this.showResetConfirmationModal = false;
+    },
+
+    cancelForm() {
+      if (!this.form?.isDirty) {
+        this.confirmCancel();
+
+        return;
+      }
+
+      this.showCancelConfirmationModal = true;
+    },
+
+    confirmCancel() {
+      this.$inertia.get(this.createRoute);
     },
   },
 });
