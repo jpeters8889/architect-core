@@ -4,7 +4,7 @@ const path = require('path');
 
 mix
     .setPublicPath('resources/dist')
-    .ts('resources/js/architect.ts', '')
+    .ts('resources/ts/architect.ts', '')
     .vue()
     .sass('resources/scss/architect.scss', '')
     .options({
@@ -15,7 +15,7 @@ mix
         },
     })
     .alias({
-        '@': path.join(__dirname, 'resources/js'),
+        '@': path.join(__dirname, 'resources/ts'),
     })
     // .version()
     .sourceMaps();

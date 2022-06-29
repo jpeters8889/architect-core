@@ -7,5 +7,5 @@
         "strict": true,
         "skipLibCheck": true,
     },
-    "include": ["./resources/js/**/*.ts", "./resources/js/**/*.vue"],
+    "include": ["./resources/ts/**/*.ts", "./resources/ts/**/*.vue"],
 }

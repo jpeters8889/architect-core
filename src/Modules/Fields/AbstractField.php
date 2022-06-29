@@ -14,6 +14,8 @@ abstract class AbstractField
 
     protected ?Closure $formGetter = null;
 
+    protected ?Closure $customSetter = null;
+
     protected bool $displayOnTable = true;
 
     protected bool $displayOnForm = true;
@@ -76,6 +78,25 @@ abstract class AbstractField
         }
 
         return $this->getCurrentValue($model);
+    }
+
+    public function setValue(Model $model, mixed $value): void
+    {
+        if ($this->customSetter) {
+            call_user_func($this->customSetter, $model, $value);
+
+            return;
+        }
+
+        $model->{$this->column()} = $value;
+    }
+
+    /** @phpstan-param Closure(Model $model, mixed $value): mixed $setter */
+    public function setValueUsing(Closure $setter): static
+    {
+        $this->customSetter = $setter;
+
+        return $this;
     }
 
     /** @phpstan-param Closure(Model $model): mixed $getter */

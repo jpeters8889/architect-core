@@ -52,7 +52,7 @@ class BlueprintDeleteTest extends FeatureTestCase
     /** @test */
     public function itHasAFlashMessageInTheResponse(): void
     {
-        $this->delete('/architect/blueprint/users/1')->assertSessionHas('flash');
-        $this->put('/architect/blueprint/users/1')->assertSessionHas('flash');
+        $this->delete('/architect/blueprint/users/1')->assertFlashMessage('Record Deleted!');
+        $this->put('/architect/blueprint/users/1')->assertFlashMessage('Record Restored!');
     }
 }

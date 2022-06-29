@@ -4,7 +4,6 @@ namespace Jpeters8889\Architect\Modules\Blueprints\Http\Controllers;
 
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Jpeters8889\Architect\Modules\Blueprints\Http\Requests\CreateItemRequest;
@@ -12,6 +11,7 @@ use Jpeters8889\Architect\Modules\Blueprints\Processors\CreateNewProcessor;
 use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
+use Jpeters8889\Architect\Shared\Flash;
 
 class BlueprintController
 {
@@ -35,8 +35,17 @@ class BlueprintController
         ]);
     }
 
-    public function store(CreateItemRequest $request, CreateNewProcessor $processor): void
+    public function store(CreateItemRequest $request, CreateNewProcessor $processor): RedirectResponse
     {
+        $processor->createFromRequest($request);
+
+        $route = $processor->blueprint()->listRoute();
+
+        if ($request->get('redirectBack') === 'true') {
+            $route = $processor->blueprint()->createRoute();
+        }
+
+        return redirect()->to($route)->with(...Flash::message("{$processor->blueprint()->shortName()} Created!"));
     }
 
     public function show(): void
@@ -53,13 +62,14 @@ class BlueprintController
     {
         $deletionService->handleDelete();
 
-        return back()->with('flash', ['type' => 'success', 'message' => 'Record deleted!', 'id' => Str::uuid()]);
+//        return back()->with('flash', ['type' => 'success', 'message' => 'Record deleted!', 'id' => Str::uuid()]);
+        return back()->with(...Flash::message('Record Deleted!'));
     }
 
     public function restore(DeletionService $deletionService): RedirectResponse
     {
         $deletionService->handleRestore();
 
-        return back()->with('flash', ['type' => 'success', 'message' => 'Record restored!', 'id' => Str::uuid()]);
+        return back()->with(...Flash::message('Record Restored!'));
     }
 }

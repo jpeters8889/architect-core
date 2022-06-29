@@ -66,7 +66,10 @@
     </form>
   </CardSkeleton>
 
-  <teleport to="body">
+  <component
+    :is="Teleport"
+    to="body"
+  >
     <ConfirmModal
       :show="showResetConfirmationModal"
       confirm-text="Yes, reset"
@@ -88,11 +91,16 @@
         Are you sure you want to cancel creating this {{ metas.singularTitle }}? Your data will not be saved.
       </p>
     </ConfirmModal>
-  </teleport>
+  </component>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import {
+  defineComponent,
+  Teleport as teleport_,
+  TeleportProps,
+  VNodeProps,
+} from 'vue';
 import { collect } from 'collect.js';
 import { InertiaFormProps } from '@inertiajs/inertia-vue3';
 import Architect from '../../Layouts/Architect.vue';
@@ -130,6 +138,7 @@ export default defineComponent({
     redirectBack: false,
     showResetConfirmationModal: false,
     showCancelConfirmationModal: false,
+    Teleport: undefined,
   }),
 
   computed: {
@@ -137,6 +146,12 @@ export default defineComponent({
   },
 
   created() {
+    this.Teleport = teleport_ as {
+      new (): {
+        $props: VNodeProps & TeleportProps
+      }
+    };
+
     this.buildForm();
   },
 
@@ -150,6 +165,7 @@ export default defineComponent({
 
     submitForm() {
       this.form?.post(`${this.createRoute}?redirectBack=${this.redirectBack}`);
+      this.form?.reset();
 
       this.redirectBack = false;
     },

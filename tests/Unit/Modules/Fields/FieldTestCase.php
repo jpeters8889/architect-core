@@ -4,6 +4,7 @@ namespace Jpeters8889\Architect\Tests\Unit\Modules\Fields;
 
 use Illuminate\Database\Eloquent\Model;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
+use Jpeters8889\Architect\Tests\AppClasses\Models\User;
 use Jpeters8889\Architect\Tests\Factories\UserFactory;
 use Jpeters8889\Architect\Tests\TestCase;
 
@@ -103,5 +104,34 @@ abstract class FieldTestCase extends TestCase
 
         $this->assertFalse($username->shouldDisplayOnForm());
         $this->assertFalse($email->shouldDisplayOnForm());
+    }
+
+    /** @test */
+    public function itCanSetFieldsOnAModel(): void
+    {
+        $model = new User();
+
+        $this->assertNull($model->username);
+
+        $this->makeField('username')->setValue($model, 'foobar');
+
+        $this->assertNotNull($model->username);
+        $this->assertEquals('foobar', $model->username);
+    }
+
+    /** @test */
+    public function itCanUseACustomSetterOnTheField(): void
+    {
+        $model = new User();
+
+        $this->assertNull($model->username);
+
+        $field = $this->makeField('username')->setValueUsing(function (Model $model, mixed $value) {
+            $model->username = "{$value} - appended";
+        });
+
+        $field->setValue($model, 'foobar');
+
+        $this->assertEquals('foobar - appended', $model->username);
     }
 }

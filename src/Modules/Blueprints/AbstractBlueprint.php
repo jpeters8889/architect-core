@@ -5,6 +5,7 @@ namespace Jpeters8889\Architect\Modules\Blueprints;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use Illuminate\Support\Stringable;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 use Jpeters8889\Architect\Shared\Contracts\Registerable;
 use Jpeters8889\Architect\Shared\Traits\DisplaysOnNavigation;
@@ -21,11 +22,26 @@ abstract class AbstractBlueprint implements Registerable
         return 'Blueprints';
     }
 
-    protected function friendlyName(): string
+    public function listRoute(): string
     {
-        return Str::of(class_basename(static::class))
-            ->before('Blueprint')
-            ->plural();
+        $basePath = config('architect.base_path');
+
+        return "{$basePath}/blueprint/{$this->slug()}";
+    }
+
+    public function createRoute(): string
+    {
+        return "{$this->listRoute()}/create";
+    }
+
+    protected function friendlyName(): Stringable
+    {
+        return $this->shortName()->plural();
+    }
+
+    public function shortName(): Stringable
+    {
+        return Str::of(class_basename(static::class))->before('Blueprint');
     }
 
     /**
@@ -49,6 +65,13 @@ abstract class AbstractBlueprint implements Registerable
     public function query(): Builder
     {
         return $this->model()::query();
+    }
+
+    public function newModel(): Model
+    {
+        $class = $this->model();
+
+        return new $class();
     }
 
     public function perPage(): int
