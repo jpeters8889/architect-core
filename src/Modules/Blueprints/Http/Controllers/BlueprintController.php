@@ -10,6 +10,7 @@ use Jpeters8889\Architect\Modules\Blueprints\Http\Requests\CreateItemRequest;
 use Jpeters8889\Architect\Modules\Blueprints\Processors\CreateNewProcessor;
 use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
+use Jpeters8889\Architect\Modules\Blueprints\Services\EditFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
 use Jpeters8889\Architect\Shared\Flash;
 
@@ -48,7 +49,7 @@ class BlueprintController
         return redirect()->to($route)->with(...Flash::message("{$processor->blueprint()->shortName()} Created!"));
     }
 
-    public function show(): void
+    public function show(EditFormService $editFormService): void
     {
         //
     }

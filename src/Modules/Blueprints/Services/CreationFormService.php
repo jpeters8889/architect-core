@@ -21,14 +21,19 @@ class CreationFormService extends BlueprintDisplayService
     public function formFields(): Collection
     {
         return $this->fields->map(function (AbstractField $field) {
-            return new BlueprintFormField(
-                id: $field->column(),
-                label: $field->label(),
-                component: $field->component(),
-                helpText: $field->getFormHelpText(),
-                rules: $field->getValidationRules(),
-                meta: $field->metaData(),
-            );
+            return $this->createFormFieldPayload($field);
         });
+    }
+
+    protected function createFormFieldPayload(AbstractField $field): BlueprintFormField
+    {
+        return new BlueprintFormField(
+            id: $field->column(),
+            label: $field->label(),
+            component: $field->component(),
+            helpText: $field->getFormHelpText(),
+            rules: $field->getValidationRules(),
+            meta: $field->metaData(),
+        );
     }
 }

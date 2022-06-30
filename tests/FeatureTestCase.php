@@ -28,7 +28,7 @@ class FeatureTestCase extends TestCase
 
     protected function getPackageProviders($app)
     {
-        config(['inertia.testing.page_paths' => [__DIR__ . '/../resources/js/Pages']]);
+        config(['inertia.testing.page_paths' => [__DIR__ . '/../resources/ts/Pages']]);
         config(['inertia.testing.page_extensions' => ['vue']]);
 
         return array_merge([ServiceProvider::class], parent::getPackageProviders($app));

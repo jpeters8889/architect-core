@@ -24,6 +24,7 @@ abstract class AbstractBlueprint implements Registerable
 
     public function listRoute(): string
     {
+        /** @var string $basePath */
         $basePath = config('architect.base_path');
 
         return "{$basePath}/blueprint/{$this->slug()}";

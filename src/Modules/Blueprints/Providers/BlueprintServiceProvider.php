@@ -12,6 +12,7 @@ use Jpeters8889\Architect\Modules\Blueprints\Processors\CreateNewProcessor;
 use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
 use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
+use Jpeters8889\Architect\Modules\Blueprints\Services\EditFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
 
 class BlueprintServiceProvider extends ServiceProvider
@@ -27,6 +28,14 @@ class BlueprintServiceProvider extends ServiceProvider
         $this->app->scoped(CreationFormService::class, function (): CreationFormService {
             try {
                 return $this->instantiateCreationFormService();
+            } catch (BlueprintNotFoundException $exception) {
+                abort(404);
+            }
+        });
+
+        $this->app->scoped(EditFormService::class, function (): EditFormService {
+            try {
+                return $this->instantiateEditFormService();
             } catch (BlueprintNotFoundException $exception) {
                 abort(404);
             }
@@ -78,6 +87,16 @@ class BlueprintServiceProvider extends ServiceProvider
     protected function instantiateCreationFormService(): CreationFormService
     {
         return new CreationFormService($this->resolveBlueprintFromSlug());
+    }
+
+    protected function instantiateEditFormService(): EditFormService
+    {
+        $concreteBlueprint = $this->resolveBlueprintFromSlug();
+
+        /** @var string | int $id */
+        $id = Request::route('id');
+
+        return (new EditFormService($concreteBlueprint))->loadFromId($id);
     }
 
     protected function instantiateDeletionService(): DeletionService

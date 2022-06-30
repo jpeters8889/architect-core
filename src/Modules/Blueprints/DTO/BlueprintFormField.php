@@ -19,4 +19,6 @@ class BlueprintFormField extends DataTransferObject
     public ?string $helpText;
 
     public ?array $meta = [];
+
+    public mixed $value = null;
 }

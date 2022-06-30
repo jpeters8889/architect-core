@@ -13,7 +13,9 @@ class Password extends AbstractField
     {
         $this->getValueForTableUsing(fn () => '');
 
-        $this->setValueUsing(function (Model $model, string $value) {
+        $this->setValueUsing(function (Model $model, mixed $value) {
+            /** @var string $value */
+
             $model->{$this->column} = Hash::make($value);
         });
     }

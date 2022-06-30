@@ -10,6 +10,7 @@ Route::prefix('blueprint/{blueprint}')->group(function () {
     Route::get('/', [BlueprintController::class, 'index']);
     Route::get('create', [BlueprintController::class, 'create']);
     Route::post('/', [BlueprintController::class, 'store']);
+    Route::get('{id}', [BlueprintController::class, 'show']);
     Route::delete('{id}', [BlueprintController::class, 'destroy']);
     Route::put('{id}', [BlueprintController::class, 'restore']);
 });

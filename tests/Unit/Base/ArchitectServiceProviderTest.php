@@ -8,6 +8,7 @@ use Jpeters8889\Architect\Modules\Blueprints\Processors\CreateNewProcessor;
 use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
 use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
+use Jpeters8889\Architect\Modules\Blueprints\Services\EditFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
 use Jpeters8889\Architect\Modules\Dashboards\Registrar as DashboardRegistrar;
 use Jpeters8889\Architect\Tests\AppClasses\TestDashboard;
@@ -95,5 +96,13 @@ class ArchitectServiceProviderTest extends TestCase
         $this->expectException(BindingResolutionException::class);
 
         resolve(CreateNewProcessor::class);
+    }
+
+    /** @test */
+    public function itErrorsWhenTryingToGetABlueprintEditFormServiceWhenNotOnABlueprintUrl(): void
+    {
+        $this->expectException(BindingResolutionException::class);
+
+        resolve(EditFormService::class);
     }
 }
