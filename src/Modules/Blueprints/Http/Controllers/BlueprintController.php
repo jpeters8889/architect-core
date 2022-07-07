@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 use Jpeters8889\Architect\Modules\Blueprints\Http\Requests\CreateItemRequest;
+use Jpeters8889\Architect\Modules\Blueprints\Http\Requests\UpdateItemRequest;
 use Jpeters8889\Architect\Modules\Blueprints\Processors\CreateNewProcessor;
+use Jpeters8889\Architect\Modules\Blueprints\Processors\EditItemProcessor;
 use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\EditFormService;
@@ -49,21 +51,27 @@ class BlueprintController
         return redirect()->to($route)->with(...Flash::message("{$processor->blueprint()->shortName()} Created!"));
     }
 
-    public function show(EditFormService $editFormService): void
+    public function show(EditFormService $editFormService): Response
     {
-        //
+        return Inertia::render('Blueprint/Edit', [
+            'metas' => $editFormService->metas(),
+            'fields' => $editFormService->formFields(),
+        ]);
     }
 
-    public function update(): void
+    public function update(UpdateItemRequest $request, EditItemProcessor $processor): RedirectResponse
     {
-        //
+        $processor->updateItemFromRequest($request);
+
+        return redirect()
+            ->to($processor->blueprint()->listRoute())
+            ->with(...Flash::message("{$processor->blueprint()->shortName()} Updated!"));
     }
 
     public function destroy(DeletionService $deletionService): RedirectResponse
     {
         $deletionService->handleDelete();
 
-//        return back()->with('flash', ['type' => 'success', 'message' => 'Record deleted!', 'id' => Str::uuid()]);
         return back()->with(...Flash::message('Record Deleted!'));
     }
 

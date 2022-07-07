@@ -5,6 +5,7 @@ namespace Jpeters8889\Architect\Tests\Unit\Base;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Jpeters8889\Architect\ArchitectCore;
 use Jpeters8889\Architect\Modules\Blueprints\Processors\CreateNewProcessor;
+use Jpeters8889\Architect\Modules\Blueprints\Processors\EditItemProcessor;
 use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
 use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
@@ -104,5 +105,13 @@ class ArchitectServiceProviderTest extends TestCase
         $this->expectException(BindingResolutionException::class);
 
         resolve(EditFormService::class);
+    }
+
+    /** @test */
+    public function itErrorsWhenTryingToGetABlueprintEditItemProcessorWhenNotOnABlueprintUrl(): void
+    {
+        $this->expectException(BindingResolutionException::class);
+
+        resolve(EditItemProcessor::class);
     }
 }

@@ -77,6 +77,7 @@ export type BlueprintFormField = {
   rules: string[];
   helpText?: string;
   meta?: { [K: string]: any },
+  value?: string | number | boolean,
 };
 
 export type PaginationData = { label: string, goTo: number }[];

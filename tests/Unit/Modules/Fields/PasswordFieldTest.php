@@ -6,12 +6,22 @@ use Illuminate\Support\Facades\Hash;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 use Jpeters8889\Architect\Modules\Fields\Password;
 use Jpeters8889\Architect\Tests\AppClasses\Models\User;
+use Jpeters8889\Architect\Tests\Factories\UserFactory;
 
 class PasswordFieldTest extends FieldTestCase
 {
     protected function makeField(string $column, string $label = null): AbstractField
     {
         return Password::make($column, $label);
+    }
+
+    /** @test */
+    public function itCanGetTheCurrentValueForDisplayOnForms(): void
+    {
+        $user = UserFactory::new()->create(['password' => 'secret']);
+        $field = $this->makeField('password');
+
+        $this->assertEquals('', $field->getCurrentValueForForm($user));
     }
 
     public function itCanGetTheCurrentValueForTabularDisplay(): void

@@ -9,6 +9,7 @@ use Illuminate\Support\ServiceProvider;
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
 use Jpeters8889\Architect\Modules\Blueprints\Exceptions\BlueprintNotFoundException;
 use Jpeters8889\Architect\Modules\Blueprints\Processors\CreateNewProcessor;
+use Jpeters8889\Architect\Modules\Blueprints\Processors\EditItemProcessor;
 use Jpeters8889\Architect\Modules\Blueprints\Registrar as BlueprintRegistrar;
 use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
 use Jpeters8889\Architect\Modules\Blueprints\Services\DeletionService;
@@ -67,6 +68,14 @@ class BlueprintServiceProvider extends ServiceProvider
                 abort(404);
             }
         });
+
+        $this->app->scoped(EditItemProcessor::class, function (): EditItemProcessor {
+            try {
+                return $this->instantiateEditItemProcessor();
+            } catch (BlueprintNotFoundException $exception) {
+                abort(404);
+            }
+        });
     }
 
     protected function instantiateListService(): ListService
@@ -110,6 +119,18 @@ class BlueprintServiceProvider extends ServiceProvider
     protected function instantiateCreateNewProcessor(): CreateNewProcessor
     {
         return new CreateNewProcessor($this->resolveBlueprintFromSlug());
+    }
+
+    protected function instantiateEditItemProcessor(): EditItemProcessor
+    {
+        $processor = new EditItemProcessor($this->resolveBlueprintFromSlug());
+
+        /** @var string | int $id */
+        $id = Route::current()?->parameter('id');
+
+        $processor->resolveItem($id);
+
+        return $processor;
     }
 
     protected function resolveBlueprintFromSlug(): AbstractBlueprint

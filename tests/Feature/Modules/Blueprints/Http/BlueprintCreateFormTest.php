@@ -24,7 +24,7 @@ class BlueprintCreateFormTest extends FeatureTestCase
     {
         $this->get('/architect/blueprint/users/create')
             ->assertInertia(
-                fn (Assert $page) => $page->component('Blueprint/Create')->has('metas')
+                fn (Assert $page) => $page->component('Blueprint/Create')->has('metas')->has('fields')
             );
     }
 }

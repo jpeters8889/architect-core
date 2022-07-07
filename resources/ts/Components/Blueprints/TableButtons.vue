@@ -15,6 +15,7 @@
     <div
       v-if="settings.canEdit"
       title="Edit"
+      @click="handleButtonPress('edit')"
     >
       <PencilAltIcon class="w-4 h-4 hover:text-gray-900 transition cursor-pointer" />
     </div>

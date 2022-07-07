@@ -171,6 +171,8 @@ export default defineComponent({
       }
 
       switch (button) {
+        case 'edit':
+          return Inertia.get(`${window.location.pathname}/${safeId}`);
         case 'delete':
           return Inertia.delete(`${window.location.pathname}/${safeId}`, { preserveScroll: true });
         case 'restore':

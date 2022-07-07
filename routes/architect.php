@@ -11,6 +11,7 @@ Route::prefix('blueprint/{blueprint}')->group(function () {
     Route::get('create', [BlueprintController::class, 'create']);
     Route::post('/', [BlueprintController::class, 'store']);
     Route::get('{id}', [BlueprintController::class, 'show']);
+    Route::patch('{id}', [BlueprintController::class, 'update']);
     Route::delete('{id}', [BlueprintController::class, 'destroy']);
     Route::put('{id}', [BlueprintController::class, 'restore']);
 });
