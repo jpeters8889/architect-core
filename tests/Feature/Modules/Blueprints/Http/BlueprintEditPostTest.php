@@ -48,6 +48,7 @@ class BlueprintEditPostTest extends FeatureTestCase
             ->filter(fn (AbstractField $field) => $field->shouldDisplayOnForm())
             ->mapWithKeys(fn (AbstractField $field) => [$field->column() => $field->getValidationRules()])
             ->filter(fn (array $rules) => in_array('required', $rules, true))
+            ->filter(fn (array $rules, string $field) => $field !== 'password')
             ->keys()
             ->toArray();
 

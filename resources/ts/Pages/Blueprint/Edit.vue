@@ -158,7 +158,7 @@ export default defineComponent({
     },
 
     submitForm() {
-      this.form?.post(this.submitRoute);
+      this.form?.patch(this.submitRoute);
     },
 
     resetForm() {

@@ -3,6 +3,7 @@
 namespace Jpeters8889\Architect\Tests\Unit\Modules\Blueprints\Processors;
 
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules\Unique;
 use Jpeters8889\Architect\Modules\Blueprints\Http\Requests\UpdateItemRequest;
 use Jpeters8889\Architect\Modules\Blueprints\Processors\EditItemProcessor;
@@ -62,6 +63,14 @@ class EditItemProcessorTest extends TestCase
     }
 
     /** @test */
+    public function itRemovesRequiredRulesFromPasswordFields(): void
+    {
+        $rules = $this->editItemProcessor->validationRules();
+
+        $this->assertNotContains('required', $rules['password']);
+    }
+
+    /** @test */
     public function itCanUpdateTheItemFromARequest(): void
     {
         $request = UpdateItemRequest::create('/', 'PATCH', [
@@ -79,5 +88,41 @@ class EditItemProcessorTest extends TestCase
         $this->assertEquals('updated', $this->user->username);
         $this->assertEquals('updated@foo.com', $this->user->email);
         $this->assertFalse($this->user->active);
+    }
+
+    /** @test */
+    public function itDoesntErrorOrUpdateThePasswordIfThePasswordIsEmpty(): void
+    {
+        $request = UpdateItemRequest::create('/', 'PATCH', [
+            'username' => 'updated',
+            'password' => '',
+            'email' => 'updated@foo.com',
+            'level' => 'Member',
+            'active' => false,
+        ]);
+
+        $this->editItemProcessor->updateItemFromRequest($request);
+
+        $this->user->refresh();
+
+        $this->assertTrue(Hash::check('password', $this->user->password));
+    }
+
+    /** @test */
+    public function itUpdateThePasswordIfThePasswordIsSent(): void
+    {
+        $request = UpdateItemRequest::create('/', 'PATCH', [
+            'username' => 'updated',
+            'password' => 'new-password',
+            'email' => 'updated@foo.com',
+            'level' => 'Member',
+            'active' => false,
+        ]);
+
+        $this->editItemProcessor->updateItemFromRequest($request);
+
+        $this->user->refresh();
+
+        $this->assertTrue(Hash::check('new-password', $this->user->password));
     }
 }

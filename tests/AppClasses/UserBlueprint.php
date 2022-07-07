@@ -5,6 +5,7 @@ namespace Jpeters8889\Architect\Tests\AppClasses;
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
 use Jpeters8889\Architect\Modules\Fields\Checkbox;
 use Jpeters8889\Architect\Modules\Fields\DateTime;
+use Jpeters8889\Architect\Modules\Fields\Password;
 use Jpeters8889\Architect\Modules\Fields\SelectBox;
 use Jpeters8889\Architect\Modules\Fields\TextField;
 use Jpeters8889\Architect\Tests\AppClasses\Models\User;
@@ -25,7 +26,7 @@ class UserBlueprint extends AbstractBlueprint
 
             TextField::make('email', 'Email Address')->validationRules(['required', 'email', 'unique:users']),
 
-            TextField::make('password')->hideOnTable()->required(),
+            Password::make('password')->hideOnTable()->required(),
 
             SelectBox::make('level')
                 ->options(['Member', 'Privileged', 'Admin'])
