@@ -2,12 +2,15 @@
 
 namespace Jpeters8889\Architect\Modules\Blueprints\Services;
 
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Jpeters8889\Architect\Modules\Blueprints\DTO\BlueprintFormField;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 
 class CreationFormService extends BlueprintDisplayService
 {
+    protected null|Model $duplicateFrom = null;
+
     /**
      * @param Collection<int, AbstractField> $fields
      * @return Collection<int, AbstractField>
@@ -34,6 +37,14 @@ class CreationFormService extends BlueprintDisplayService
             helpText: $field->getFormHelpText(),
             rules: $field->getValidationRules(),
             meta: $field->metaData(),
+            value: $this->duplicateFrom ? $field->getCurrentValueForForm($this->duplicateFrom) : null,
         );
+    }
+
+    public function duplicateFrom(int|string $id): self
+    {
+        $this->duplicateFrom = $this->blueprint->query()->findOrFail($id);
+
+        return $this;
     }
 }

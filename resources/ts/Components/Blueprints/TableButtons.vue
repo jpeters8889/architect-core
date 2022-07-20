@@ -3,6 +3,7 @@
     <div
       v-if="settings.canDuplicate"
       title="Duplicate"
+      @click="handleButtonPress('duplicate')"
     >
       <DuplicateIcon class="w-4 h-4 hover:text-gray-900 transition cursor-pointer" />
     </div>

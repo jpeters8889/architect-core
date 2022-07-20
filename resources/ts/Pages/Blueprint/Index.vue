@@ -177,6 +177,8 @@ export default defineComponent({
           return Inertia.delete(`${window.location.pathname}/${safeId}`, { preserveScroll: true });
         case 'restore':
           return Inertia.put(`${window.location.pathname}/${safeId}`, {}, { preserveScroll: true });
+        case 'duplicate':
+          return Inertia.get(`${window.location.pathname}/create/?from=${safeId}`);
       }
 
       return false;

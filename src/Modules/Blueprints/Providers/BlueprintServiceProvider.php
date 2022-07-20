@@ -95,7 +95,16 @@ class BlueprintServiceProvider extends ServiceProvider
 
     protected function instantiateCreationFormService(): CreationFormService
     {
-        return new CreationFormService($this->resolveBlueprintFromSlug());
+        $service = new CreationFormService($this->resolveBlueprintFromSlug());
+
+        /** @var null | string | int $duplicateFrom */
+        $duplicateFrom = app('request')->get('from');
+
+        if ($duplicateFrom) {
+            $service->duplicateFrom($duplicateFrom);
+        }
+
+        return $service;
     }
 
     protected function instantiateEditFormService(): EditFormService

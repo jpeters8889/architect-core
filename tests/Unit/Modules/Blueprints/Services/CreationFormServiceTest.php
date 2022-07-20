@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Jpeters8889\Architect\Modules\Blueprints\DTO\BlueprintFormField;
 use Jpeters8889\Architect\Modules\Blueprints\Services\CreationFormService;
 use Jpeters8889\Architect\Tests\AppClasses\UserBlueprint;
+use Jpeters8889\Architect\Tests\Factories\UserFactory;
 use Jpeters8889\Architect\Tests\TestCase;
 
 class CreationFormServiceTest extends TestCase
@@ -106,5 +107,24 @@ class CreationFormServiceTest extends TestCase
         $form->each(function ($field) {
             $this->assertInstanceOf(BlueprintFormField::class, $field);
         });
+    }
+
+    /** @test */
+    public function itCanBeDuplicatedFromAnExistingItem(): void
+    {
+        $user = UserFactory::new()->create();
+
+        $this->creationService->duplicateFrom(1);
+
+        $this->creationService->formFields()
+            ->each(function (BlueprintFormField $field) use ($user) {
+                $this->assertNotNull($field->value);
+                $this->assertEquals(
+                    $this->creationService->blueprint()
+                        ->resolveFieldFromColumn($field->id)
+                        ->getCurrentValueForForm($user),
+                    $field->value,
+                );
+            });
     }
 }

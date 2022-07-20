@@ -157,7 +157,7 @@ export default defineComponent({
 
   methods: {
     buildForm() {
-      const mappedFormFields = collect(this.fields).mapWithKeys((field: BlueprintFormField) => [field.id, null]);
+      const mappedFormFields = collect(this.fields).mapWithKeys((field: BlueprintFormField) => [field.id, field.value]);
 
       // @ts-ignore
       this.form = this.$inertia.form(`create-${this.metas.singularTitle}`, mappedFormFields.all());
