@@ -3,7 +3,9 @@
 namespace Jpeters8889\Architect\Modules\Blueprints\Services;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Jpeters8889\Architect\Modules\Blueprints\DTO\ListServiceLoader;
 use Jpeters8889\Architect\Modules\Blueprints\Paginator;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 
@@ -21,7 +23,7 @@ class ListService extends BlueprintDisplayService
      */
     protected function transformFields(Collection $fields): Collection
     {
-        return $fields->filter(fn (AbstractField $field) => $field->shouldDisplayOnTable());
+        return $fields->filter(fn(AbstractField $field) => $field->shouldDisplayOnTable());
     }
 
     public function paginator(): LengthAwarePaginator
@@ -30,27 +32,40 @@ class ListService extends BlueprintDisplayService
     }
 
     /** @param array{string, 'asc' | 'desc'} | null $sorting */
-    public function load(int $page = null, array $sorting = null): self
+    public function load(ListServiceLoader $loader): self
     {
-        if (! $sorting) {
-            $sorting = $this->blueprint->orderBy();
+        if (!$loader->sorting) {
+            $loader->sorting = $this->blueprint->orderBy();
         }
 
-        $this->paginator = $this
-            ->blueprint
-            ->query()
-            ->orderBy(...$sorting)
+        $baseQuery = $this->blueprint->query();
+
+        $this->applyFilters($baseQuery, $loader->filter);
+
+        $this->paginator = $baseQuery
+            ->orderBy(...$loader->sorting)
             ->paginate(
                 $this->blueprint->perPage(),
                 [$this->blueprint->modelKey()],
-                page: $page
+                page: $loader->page
             );
 
-        $this->currentPage = $page ?: 1;
+        $this->currentPage = $loader->page ?: 1;
 
-        $this->currentSorting = $sorting;
+        $this->currentSorting = $loader->sorting;
 
         return $this;
+    }
+
+    protected function applyFilters(Builder $builder, ?array $filters): void
+    {
+        if (!$filters) {
+            return;
+        }
+
+        foreach ($filters as $key => $values) {
+            $this->blueprint()->resolveFieldFromColumn($key)?->filter($builder, explode(',', $values));
+        }
     }
 
     /** @return array{headers: Collection<int, array{label: string, column: string, component: string, sortable: bool}>} */
@@ -63,7 +78,7 @@ class ListService extends BlueprintDisplayService
         $components = $this->components()->toArray();
 
         return [
-            'headers' => $this->headers()->map(fn (string $header, int $index) => [
+            'headers' => $this->headers()->map(fn(string $header, int $index) => [
                 'label' => $header,
                 'column' => $columns[$index],
                 'component' => $components[$index],
@@ -83,6 +98,9 @@ class ListService extends BlueprintDisplayService
             'numberOfPages' => $paginator->lastPage(),
             'hasNextPage' => $paginator->hasMorePages(),
             'hasPreviousPage' => $paginator->currentPage() > 1,
+            'totalItems' => $paginator->total(),
+            'start' => ($paginator->currentPage() - 1) * $this->blueprint->perPage() + 1,
+            'end' => $this->blueprint->perPage() * $paginator->currentPage(),
             'items' => $paginator->currentItems($this),
         ];
     }

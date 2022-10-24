@@ -5,6 +5,7 @@ namespace Jpeters8889\Architect\Tests\Unit\Modules\Blueprints\Services;
 use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
+use Jpeters8889\Architect\Modules\Blueprints\DTO\ListServiceLoader;
 use Jpeters8889\Architect\Modules\Blueprints\Paginator;
 use Jpeters8889\Architect\Modules\Blueprints\Services\ListService;
 use Jpeters8889\Architect\Tests\AppClasses\UserBlueprint;
@@ -77,7 +78,7 @@ class ListServiceTest extends TestCase
     /** @test */
     public function itCanGetThePaginator(): void
     {
-        $this->listService->load();
+        $this->listService->load(new ListServiceLoader());
 
         $this->assertNotNull($this->listService->paginator());
         $this->assertInstanceOf(LengthAwarePaginator::class, $this->listService->paginator());
@@ -143,7 +144,7 @@ class ListServiceTest extends TestCase
     {
         UserFactory::new()->create();
 
-        $this->listService->load();
+        $this->listService->load(new ListServiceLoader());
 
         $keys = ['currentPage', 'numberOfPages', 'hasNextPage', 'hasPreviousPage', 'items'];
 
@@ -157,7 +158,7 @@ class ListServiceTest extends TestCase
     {
         UserFactory::new()->count(15)->create();
 
-        $this->listService->load(2);
+        $this->listService->load(new ListServiceLoader(page: 2));
 
         $this->assertEquals(2, $this->listService->data()['currentPage']);
     }
@@ -167,7 +168,7 @@ class ListServiceTest extends TestCase
     {
         UserFactory::new()->count(15)->create();
 
-        $this->listService->load();
+        $this->listService->load(new ListServiceLoader());
 
         $this->assertEquals(2, $this->listService->data()['numberOfPages']);
     }
@@ -177,11 +178,11 @@ class ListServiceTest extends TestCase
     {
         UserFactory::new()->count(15)->create();
 
-        $this->listService->load();
+        $this->listService->load(new ListServiceLoader());
 
         $this->assertTrue($this->listService->data()['hasNextPage']);
 
-        $this->listService->load(2);
+        $this->listService->load(new ListServiceLoader(page: 2));
 
         $this->assertFalse($this->listService->data()['hasNextPage']);
     }
@@ -191,11 +192,11 @@ class ListServiceTest extends TestCase
     {
         UserFactory::new()->count(15)->create();
 
-        $this->listService->load();
+        $this->listService->load(new ListServiceLoader());
 
         $this->assertFalse($this->listService->data()['hasPreviousPage']);
 
-        $this->listService->load(2);
+        $this->listService->load(new ListServiceLoader(page: 2));
 
         $this->assertTrue($this->listService->data()['hasPreviousPage']);
     }
@@ -205,7 +206,7 @@ class ListServiceTest extends TestCase
     {
         UserFactory::new()->count(15)->create();
 
-        $this->listService->load();
+        $this->listService->load(new ListServiceLoader());
 
         $this->assertInstanceOf(Collection::class, $this->listService->data()['items']);
         $this->assertCount($this->listService->blueprint()->perPage(), $this->listService->data()['items']);
@@ -216,10 +217,10 @@ class ListServiceTest extends TestCase
     {
         UserFactory::new()->create();
 
-        $this->listService->load();
+        $this->listService->load(new ListServiceLoader());
         $items = $this->listService->data()['items'];
 
-        $this->listService->columns()->each(fn (string $column) => $this->assertArrayHasKey($column, $items[0]));
+        $this->listService->columns()->each(fn(string $column) => $this->assertArrayHasKey($column, $items[0]));
     }
 
     /** @test */
@@ -227,7 +228,7 @@ class ListServiceTest extends TestCase
     {
         $user = UserFactory::new()->create();
 
-        $this->listService->load();
+        $this->listService->load(new ListServiceLoader());
         $items = $this->listService->data()['items'];
 
         $this->listService->columns()->each(function (string $column) use ($items, $user) {
@@ -245,7 +246,7 @@ class ListServiceTest extends TestCase
         $user1 = UserFactory::new()->create(['created_at' => Carbon::now()->subYear(), 'updated_at' => Carbon::now()->subYear()]);
         $user2 = UserFactory::new()->create();
 
-        $this->listService->load();
+        $this->listService->load(new ListServiceLoader());
         $items = $this->listService->data()['items'];
 
         $this->assertSame($user2->id, $items[0]['id']);
@@ -256,7 +257,7 @@ class ListServiceTest extends TestCase
     {
         UserFactory::new()->count(15)->create();
 
-        $this->listService->load();
+        $this->listService->load(new ListServiceLoader());
         $items = $this->listService->data()['items'];
 
         foreach ($items as $item) {
@@ -271,5 +272,36 @@ class ListServiceTest extends TestCase
             $this->assertArrayHasKey('publicUrl', $metas);
             $this->assertArrayHasKey('id', $metas);
         }
+    }
+
+    /** @test */
+    public function itFiltersTheItemsUsingTheGivenFilterParameters(): void
+    {
+        UserFactory::new()->create(['username' => 'NormalMember', 'level' => 'Member']);
+        UserFactory::new()->create(['username' => 'PrivilegedMember', 'level' => 'Privileged']);
+        UserFactory::new()->create(['username' => 'AdminMember', 'level' => 'Admin']);
+
+        $memberOnly = $this->listService->load(new ListServiceLoader(filter: ['level' => 'Member']))->data();
+
+        $this->assertEquals(1, $memberOnly['totalItems']);
+        $this->assertEquals('NormalMember', data_get($memberOnly, 'items.0.username'));
+    }
+
+    /** @test */
+    public function itFiltersTheMultipleItemsUsingTheGivenFilterParameters(): void
+    {
+        UserFactory::new()->create(['username' => 'NormalMember', 'level' => 'Member']);
+        UserFactory::new()->create(['username' => 'PrivilegedMember', 'level' => 'Privileged']);
+        UserFactory::new()->create(['username' => 'AdminMember', 'level' => 'Admin']);
+
+        $multipleResults = $this->listService->load(new ListServiceLoader(filter: ['level' => 'Member,Admin']))->data();
+
+        $this->assertEquals(2, $multipleResults['totalItems']);
+
+        $results = $multipleResults['items']->map(fn(Collection $item) => $item->get('username'));
+
+        $this->assertContains('NormalMember', $results);
+        $this->assertContains('AdminMember', $results);
+        $this->assertNotContains('PrivilegedMember', $results);
     }
 }

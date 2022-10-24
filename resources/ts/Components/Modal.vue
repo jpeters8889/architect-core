@@ -105,6 +105,17 @@ export default defineComponent({
 
   emits: ['close', 'closeAttempt'],
 
+  watch: {
+    show() {
+      if (this.show) {
+        document.querySelector('body')?.classList.add('overflow-hidden');
+        return;
+      }
+
+      document.querySelector('body')?.classList.remove('overflow-hidden');
+    },
+  },
+
   methods: {
     closeModal() {
       this.$emit(this.closable ? 'close' : 'closeAttempt');

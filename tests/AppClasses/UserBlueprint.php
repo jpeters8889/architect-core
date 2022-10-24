@@ -2,6 +2,7 @@
 
 namespace Jpeters8889\Architect\Tests\AppClasses;
 
+use Illuminate\Database\Eloquent\Builder;
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
 use Jpeters8889\Architect\Modules\Fields\Checkbox;
 use Jpeters8889\Architect\Modules\Fields\DateTime;
@@ -30,9 +31,17 @@ class UserBlueprint extends AbstractBlueprint
 
             SelectBox::make('level')
                 ->options(['Member', 'Privileged', 'Admin'])
+                ->filterUsing(['Member', 'Privileged', 'Admin'])
                 ->required(),
 
-            Checkbox::make('active')->isSortable()->validationRules(['required', 'bool']),
+            Checkbox::make('active')
+                ->isSortable()
+                ->filterUsing(['Yes', 'No'], function (Builder $builder, array $values) {
+                    $value = $values[0] === 'Yes';
+
+                    return $builder->where('active', $value);
+                })
+                ->validationRules(['required', 'bool']),
 
             DateTime::make('created_at')
                 ->tableOnly()

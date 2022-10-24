@@ -2,6 +2,7 @@
 
 namespace Jpeters8889\Architect\Tests\Unit\Modules\Fields;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Jpeters8889\Architect\Modules\Fields\AbstractField;
 use Jpeters8889\Architect\Tests\AppClasses\Models\User;
@@ -50,7 +51,7 @@ abstract class FieldTestCase extends TestCase
     {
         $user = UserFactory::new()->create(['username' => 'FooBar']);
         $field = $this->makeField('username')
-            ->getValueForTableUsing(fn (Model $model) => "{$model->username} Appended");
+            ->getValueForTableUsing(fn(Model $model) => "{$model->username} Appended");
 
         $this->assertEquals('FooBar Appended', $field->getCurrentValueForTable($user));
     }
@@ -69,7 +70,7 @@ abstract class FieldTestCase extends TestCase
     {
         $user = UserFactory::new()->create(['username' => 'FooBar']);
         $field = $this->makeField('username')
-            ->getValueForFormsUsing(fn (Model $model) => "{$model->username} Appended");
+            ->getValueForFormsUsing(fn(Model $model) => "{$model->username} Appended");
 
         $this->assertEquals('FooBar Appended', $field->getCurrentValueForForm($user));
     }
@@ -133,5 +134,41 @@ abstract class FieldTestCase extends TestCase
         $field->setValue($model, 'foobar');
 
         $this->assertEquals('foobar - appended', $model->username);
+    }
+
+    /** @test */
+    public function itKnowsWhetherTheFieldCanBeUsedForFiltering(): void
+    {
+        $notFilterableField = $this->makeField('username');
+        $filterableField = $this->makeField('active')->filterUsing([], fn() => true);
+
+        $this->assertFalse($notFilterableField->isFilterable());
+        $this->assertTrue($filterableField->isFilterable());
+    }
+
+    /** @test */
+    public function itReturnsTheFilterableKeys(): void
+    {
+        $field = $this->makeField('active')->filterUsing(['First', 'Second'], fn() => true);
+
+        $this->assertIsArray($field->filterKeys());
+        $this->assertEquals(['First', 'Second'], $field->filterKeys());
+    }
+
+    /** @test */
+    public function itAddsTheFilterToTheQuery(): void
+    {
+        $field = $this->makeField('active')->filterUsing(
+            ['First', 'Second'],
+            fn(Builder $builder, $values) => $builder->whereIn('active', $values)
+        );
+
+        $builder = User::query();
+
+        $this->assertCount(0, $builder->toBase()->wheres);
+
+        $field->filter($builder, ['First']);
+
+        $this->assertCount(1, $builder->toBase()->wheres);
     }
 }

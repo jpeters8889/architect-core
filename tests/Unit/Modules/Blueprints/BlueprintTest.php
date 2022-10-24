@@ -109,4 +109,23 @@ class BlueprintTest extends TestCase
 
         $this->assertFalse($model->refresh()->exists);
     }
+
+    /** @test */
+    public function itCanListTheAvailableFilters(): void
+    {
+        $availableFilters = $this->blueprint->availableFilters();
+
+        $this->assertIsArray($availableFilters);
+        $this->assertCount(2, $availableFilters);
+
+        foreach ($availableFilters as $filter) {
+            $this->assertIsArray($filter);
+            $this->assertArrayHasKey('key', $filter);
+            $this->assertArrayHasKey('label', $filter);
+            $this->assertArrayHasKey('options', $filter);
+            $this->assertIsArray($filter['options']);
+        }
+
+
+    }
 }

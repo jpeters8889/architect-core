@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Jpeters8889\Architect\Modules\Blueprints\AbstractBlueprint;
+use Jpeters8889\Architect\Modules\Blueprints\DTO\ListServiceLoader;
 use Jpeters8889\Architect\Modules\Blueprints\Exceptions\BlueprintNotFoundException;
 use Jpeters8889\Architect\Modules\Blueprints\Processors\CreateNewProcessor;
 use Jpeters8889\Architect\Modules\Blueprints\Processors\EditItemProcessor;
@@ -82,13 +83,7 @@ class BlueprintServiceProvider extends ServiceProvider
     {
         $listService = new ListService($this->resolveBlueprintFromSlug());
 
-        /** @var int $page */
-        $page = Request::get('page');
-
-        /** @var array{string, 'asc' | 'desc'} | null $sorting */
-        $sorting = Request::has('sortItem') ? [Request::get('sortItem'), Request::get('sortDirection', 'asc')] : null;
-
-        $listService->load($page ?: null, $sorting);
+        $listService->load(ListServiceLoader::parseFromRequest(request()));
 
         return $listService;
     }
@@ -146,7 +141,7 @@ class BlueprintServiceProvider extends ServiceProvider
     {
         $blueprint = Route::current()?->parameter('blueprint');
 
-        throw_if(! $blueprint, new BindingResolutionException('Can only bind when using a Blueprint'));
+        throw_if(!$blueprint, new BindingResolutionException('Can only bind when using a Blueprint'));
 
         return resolve(BlueprintRegistrar::class)->resolveFromSlug((string)$blueprint);
     }

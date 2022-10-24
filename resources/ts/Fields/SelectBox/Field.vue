@@ -13,7 +13,7 @@
       <ListboxButton class="relative w-full cursor-default py-2 pl-3 pr-10 text-left focus:outline-none sm:text-sm">
         <span class="block truncate">{{ selectValue }}</span>
         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-          <SelectorIcon class="h-5 w-5 text-gray-400" />
+          <ChevronUpDownIcon class="h-5 w-5 text-gray-400" />
         </span>
       </ListboxButton>
 
@@ -66,7 +66,7 @@ import {
   ListboxOptions,
   ListboxOption,
 } from '@headlessui/vue';
-import { CheckIcon, SelectorIcon } from '@heroicons/vue/solid';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/vue/24/outline';
 import BlueprintFormFieldComponent from '../../Common/BlueprintFormFieldComponent';
 import { SelectBoxOption } from '../../types';
 
@@ -78,8 +78,9 @@ export default defineComponent({
     ListboxOptions,
     ListboxOption,
     CheckIcon,
-    SelectorIcon,
+    ChevronUpDownIcon,
   },
+
   extends: BlueprintFormFieldComponent,
 
   props: {

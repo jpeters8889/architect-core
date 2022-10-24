@@ -83,14 +83,14 @@ abstract class AbstractBlueprint implements Registerable
     public function resolveFieldFromColumn(string $column): ?AbstractField
     {
         return collect($this->fields())
-            ->filter(fn (AbstractField $field) => $field->column() === $column)
+            ->filter(fn(AbstractField $field) => $field->column() === $column)
             ->first();
     }
 
     public function resolveFieldFromLabel(string $label): ?AbstractField
     {
         return collect($this->fields())
-            ->filter(fn (AbstractField $field) => $field->label() === $label)
+            ->filter(fn(AbstractField $field) => $field->label() === $label)
             ->first();
     }
 
@@ -133,5 +133,18 @@ abstract class AbstractBlueprint implements Registerable
     public function handleRestore(Model $model): void
     {
         //
+    }
+
+    public function availableFilters(): array
+    {
+        return collect($this->fields())
+            ->filter(fn(AbstractField $field) => $field->isFilterable())
+            ->map(fn(AbstractField $field) => [
+                'key' => $field->column(),
+                'label' => $field->label(),
+                'options' => $field->filterKeys()
+            ])
+            ->values()
+            ->toArray();
     }
 }

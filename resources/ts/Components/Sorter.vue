@@ -15,7 +15,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/solid';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/24/outline';
 import { BlueprintTableSortableDataSet } from '../types';
 
 export default defineComponent({

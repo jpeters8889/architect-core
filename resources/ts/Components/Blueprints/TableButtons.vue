@@ -5,7 +5,7 @@
       title="Duplicate"
       @click="handleButtonPress('duplicate')"
     >
-      <DuplicateIcon class="w-4 h-4 hover:text-gray-900 transition cursor-pointer" />
+      <DocumentDuplicateIcon class="w-4 h-4 hover:text-gray-900 transition cursor-pointer" />
     </div>
     <div
       v-if="settings.publicUrl"
@@ -18,7 +18,7 @@
       title="Edit"
       @click="handleButtonPress('edit')"
     >
-      <PencilAltIcon class="w-4 h-4 hover:text-gray-900 transition cursor-pointer" />
+      <PencilSquareIcon class="w-4 h-4 hover:text-gray-900 transition cursor-pointer" />
     </div>
     <template v-if="settings.canDelete">
       <div
@@ -34,22 +34,22 @@
         title="Restore"
         @click="handleButtonPress('restore')"
       >
-        <FolderAddIcon class="w-4 h-4 hover:text-gray-900 transition cursor-pointer" />
+        <FolderPlusIcon class="w-4 h-4 hover:text-gray-900 transition cursor-pointer" />
       </div>
     </template>
   </div>
 </template>
 
 <script lang="ts">
-import {
-  DuplicateIcon, EyeIcon, PencilAltIcon, TrashIcon, FolderAddIcon,
-} from '@heroicons/vue/outline';
 import { defineComponent } from 'vue';
+import {
+  DocumentDuplicateIcon, EyeIcon, FolderPlusIcon, PencilSquareIcon, TrashIcon,
+} from '@heroicons/vue/24/outline';
 import { BlueprintTableButtonEvent, BlueprintTableButtonSettings } from '../../types';
 
 export default defineComponent({
   components: {
-    DuplicateIcon, EyeIcon, PencilAltIcon, TrashIcon, FolderAddIcon,
+    DocumentDuplicateIcon, EyeIcon, PencilSquareIcon, TrashIcon, FolderPlusIcon,
   },
 
   emits: ['buttonPress'],

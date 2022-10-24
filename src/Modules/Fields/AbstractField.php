@@ -3,6 +3,7 @@
 namespace Jpeters8889\Architect\Modules\Fields;
 
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
@@ -26,9 +27,13 @@ abstract class AbstractField
 
     protected ?string $formHelpText = null;
 
+    protected array $possibleFilters = [];
+
+    protected ?Closure $filterUsing = null;
+
     final public function __construct(protected string $column, string $label = null)
     {
-        if (! $label) {
+        if (!$label) {
             $label = Str::of($this->column)->headline()->toString();
         }
 
@@ -164,6 +169,45 @@ abstract class AbstractField
         $this->sortable = true;
 
         return $this;
+    }
+
+
+    public function isFilterable(): bool
+    {
+        return $this->filterUsing !== null;
+    }
+
+    /** @return string[] */
+    public function filterKeys(): array
+    {
+        return $this->possibleFilters;
+    }
+
+    /**
+     * @param string[] $possibleFilters
+     * @phpstan-param Closure(Builder $builder, array $values): mixed $filter
+     */
+    public function filterUsing(array $possibleFilters, Closure $filter = null): static
+    {
+        if (!$filter) {
+            $filter = fn(Builder $builder, array $values) => $builder->whereIn($this->column, $values);
+        }
+        
+        $this->possibleFilters = $possibleFilters;
+        $this->filterUsing = $filter;
+
+        return $this;
+    }
+
+    public function filter(Builder $builder, array $values): Builder
+    {
+        if (!$this->isFilterable()) {
+            return $builder;
+        }
+
+        call_user_func($this->filterUsing, $builder, $values);
+
+        return $builder;
     }
 
     public function required(): static

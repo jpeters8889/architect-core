@@ -1,24 +1,22 @@
 <template>
-  <Menu
-    as="div"
-    :class="wrapperClasses"
-  >
-    <MenuButton
-      class="w-full flex items-center justify-center"
-      :class="isExpanded ? 'xl:border-b xl:border-gray-400 xl:justify-start' : ''"
-      :as="isExpanded ? 'div' : 'button'"
+  <div class="rounded w-full h-auto flex-col items-center justify-center transition relative border-0 ">
+    <div
+      class="w-full flex items-center justify-between text-gray-500 mb-4 cursor-pointer"
+      @click="toggleLinks()"
     >
-      <span :class="isExpanded ? 'xl:p-2' : ''">
-        <slot name="icon" />
-      </span>
-
-      <span
-        v-if="isExpanded && label"
-        class="text-left text-xl xl:block xl:ml-2 xl:flex-1"
-      >
+      <span class="text-left text-sm uppercase block">
         {{ label }}
       </span>
-    </MenuButton>
+
+      <ChevronDownIcon
+        v-if="!open"
+        class="w-5 h-5"
+      />
+      <ChevronUpIcon
+        v-if="open"
+        class="w-5 h-5"
+      />
+    </div>
 
     <transition
       enter-active-class="transition duration-100 ease-out"
@@ -28,76 +26,56 @@
       leave-from-class="transform scale-100 opacity-100"
       leave-to-class="transform scale-95 opacity-0"
     >
-      <MenuItems
-        class="absolute left-full top-0 min-h-10 w-auto"
-        :class="isExpanded ? 'xl:relative xl:left-auto xl:w-full' : ''"
-        :static="isExpanded"
+      <ul
+        v-if="open"
+        class="w-full flex flex-col space-y-3 text-gray-200"
       >
-        <ul
-          class="border border-gray-400 divide-y divide-gray-400 bg-gray-300 max-w-[300px] min-w-[200px] ml-2"
-          :class="isExpanded ? 'xl:w-full xl:ml-0 xl:border-0 xl:divide-y-0' : ''"
+        <li
+          v-for="link in links"
+          :key="link.label"
+          class="transition rounded-lg"
+          :class="currentPage === absoluteLink(link.slug) ? 'bg-sky-900' : 'hover:bg-sky-700'"
         >
-          <MenuItem
-            v-for="link in links"
-            :key="link.label"
+          <Link
+            class="block p-2 flex items-center"
+            :href="absoluteLink(link.slug)"
           >
-            <li
-              class="transition"
-              :class="currentPage === absoluteLink(link.slug) ? 'bg-slate-300' : 'hover:bg-slate-300'"
-            >
-              <Link
-                class="block p-2 flex items-center xl:text-gray-600"
-                :class="isExpanded ? 'xl:pl-2' : ''"
-                :href="absoluteLink(link.slug)"
-              >
-                <div
-                  class="mr-2"
-                  :class="isExpanded ? 'xl:mr-6' : ''"
-                >
-                  <component
-                    :is="linkIcon()"
-                    class="w-6 h-6"
-                  />
-                </div>
-                <span class="block flex-1">{{ link.label }}</span>
-              </Link>
-            </li>
-          </MenuItem>
-        </ul>
-      </MenuItems>
+            <div class="mr-2">
+              <component
+                :is="linkIcon()"
+                class="w-6 h-6"
+              />
+            </div>
+            <span class="block flex-1">{{ link.label }}</span>
+          </Link>
+        </li>
+      </ul>
     </transition>
-  </Menu>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { Link } from '@inertiajs/inertia-vue3';
-import { ChartSquareBarIcon, OfficeBuildingIcon, CollectionIcon } from '@heroicons/vue/outline';
 import {
-  Menu, MenuButton, MenuItems, MenuItem,
-} from '@headlessui/vue';
+  BuildingOfficeIcon,
+  ChartBarSquareIcon,
+  RectangleStackIcon,
+} from '@heroicons/vue/24/outline';
+import { ChevronDownIcon, ChevronUpIcon } from '@heroicons/vue/20/solid';
 import { NavigationChild } from '../../types';
-import ResponsiveOptions from '../../Mixins/ResponsiveOptions';
 
 export default defineComponent({
   components: {
     Link,
-    ChartSquareBarIcon,
-    Menu,
-    MenuButton,
-    MenuItems,
-    MenuItem,
-    OfficeBuildingIcon,
-    CollectionIcon,
+    ChartBarSquareIcon,
+    BuildingOfficeIcon,
+    RectangleStackIcon,
+    ChevronDownIcon,
+    ChevronUpIcon,
   },
 
-  mixins: [ResponsiveOptions],
-
   props: {
-    expanded: {
-      required: true,
-      type: Boolean,
-    },
     links: {
       required: true,
       type: Array as () => NavigationChild[],
@@ -118,45 +96,13 @@ export default defineComponent({
     },
   },
 
+  data: () => ({
+    open: true,
+  }),
+
   computed: {
     currentPage(): string {
       return window.location.pathname;
-    },
-
-    isExpanded(): boolean {
-      if (this.isLt('xl')) {
-        return false;
-      }
-
-      return this.expanded;
-    },
-
-    wrapperClasses(): string[] {
-      const classes: string[] = [
-        'rounded',
-        'w-10',
-        'h-10',
-        'border',
-        'border-gray-400',
-        'flex',
-        'items-center',
-        'justify-center',
-        'text-gray-700',
-        'hover:text-gray-900',
-        'transition',
-        'relative',
-      ];
-
-      if (this.isExpanded) {
-        classes.push(
-          'xl:w-full',
-          'xl:flex-col',
-          'xl:h-auto',
-          'xl:border-0',
-        );
-      }
-
-      return classes;
     },
   },
 
@@ -164,13 +110,13 @@ export default defineComponent({
     linkIcon(): string {
       switch (this.childIcon) {
         case 'chart':
-          return 'ChartSquareBarIcon';
+          return 'ChartBarSquareIcon';
         case 'building':
           return 'OfficeBuildingIcon';
         case 'collection':
-          return 'CollectionIcon';
+          return 'RectangleStackIcon';
         default:
-              //
+                //
       }
 
       throw new Error('Unknown Icon');
@@ -194,6 +140,10 @@ export default defineComponent({
       };
 
       return `${basePath()}/${uri}`;
+    },
+
+    toggleLinks() {
+      this.open = !this.open;
     },
   },
 });

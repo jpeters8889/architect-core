@@ -1,16 +1,12 @@
 <template>
-  <div class="w-full min-h-screen flex flex-col bg-gray-300">
-    <Header
-      :nav-displayed="displayNav"
-      @toggle-nav="displayNav = !displayNav"
+  <div class="w-full min-h-screen flex flex-col bg-gray-300 xl:flex-row">
+    <Sidebar
+      :navigation="navigation"
+      :base-path="basePath"
     />
 
-    <div class="w-full flex-1 flex">
-      <Sidebar
-        :navigation="navigation"
-        :display-nav="displayNav"
-        :base-path="basePath"
-      />
+    <div class="flex w-full flex-1 flex-col h-full">
+      <Header />
 
       <div class="w-full overflow-hidden">
         <div class="p-2 xl:p-4 flex-1">

@@ -1,53 +1,55 @@
 <template>
-  <ul
-    v-if="numberOfPages > 1"
-    class="flex flex-wrap font-semibold leading-none justify-center gap-1 text-xs"
-  >
-    <li
-      v-if="canGoBack"
-      class="border border-gray-300 bg-gray-300 text-gray-900 rounded cursor-pointer transition hover:bg-white"
-    >
-      <a
-        class="p-2 block"
-        @click.prevent="goTo(currentPage - 1)"
-      >
-        Previous
-      </a>
-    </li>
+  <div class="w-full flex justify-between items-center pr-2 sm:px-2 xl:pb-3 xl:px-4">
+    <div class="hidden sm:block">
+      Showing items
+      <strong>{{ startItem }}</strong> -
+      <strong>{{ endItem }}</strong>
+      of <strong>{{ totalItems }}</strong>
+    </div>
 
-    <li
-      v-for="page in pageArray"
-      :key="page.label"
-      class="border border-gray-300 rounded cursor-pointer transition"
-      :class="page.goTo !== currentPage ? 'bg-gray-300 text-gray-900 hover:bg-white' : 'bg-white'"
-    >
-      <a
-        class="p-2 block"
-        @click.prevent="goTo(page.goTo)"
-      >
-        {{ page.label }}
-      </a>
-    </li>
+    <div class="flex space-x-2 items-center justify-between w-full sm:w-auto">
+      <div>
+        <PaginatorSelectToggle
+          :current-page="currentPage"
+          :number-of-pages="numberOfPages"
+          @page-change="(page: number) => goTo(page)"
+        />
+      </div>
 
-    <li
-      v-if="canGoForward"
-      class="border border-gray-300 bg-gray-300 text-gray-900 rounded cursor-pointer transition hover:bg-white"
-    >
-      <a
-        class="p-2 block"
-        @click.prevent="goTo(currentPage + 1)"
-      >
-        Next
-      </a>
-    </li>
-  </ul>
+      <div class="flex space-x-2 items-center">
+        <button
+          class="rounded-full transition  block flex items-center justify-center w-8 h-8 transition"
+          :class="canGoBack ? 'bg-gray-300 text-gray-900 cursor-pointer hover:bg-sky-700 hover:text-gray-100' : 'bg-gray-200 text-gray-400 cursor-not-allowed'"
+          @click.prevent="goTo(currentPage - 1)"
+        >
+          <ChevronLeftIcon class="w-4 h-4" />
+        </button>
+
+        <button
+          class="rounded-full transition  block flex items-center justify-center w-8 h-8 transition"
+          :class="canGoForward ? 'bg-gray-300 text-gray-900 cursor-pointer hover:bg-sky-700 hover:text-gray-100' : 'bg-gray-200 text-gray-400 cursor-not-allowed'"
+          @click.prevent="goTo(currentPage + 1)"
+        >
+          <ChevronRightIcon class="w-4 h-4" />
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { PaginationData } from '../types';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
+import { SelectBoxOption } from '../types';
+import PaginatorSelectToggle from './Paginator/PaginatorSelectToggle.vue';
 
 export default defineComponent({
+  components: {
+    ChevronLeftIcon,
+    ChevronRightIcon,
+    PaginatorSelectToggle,
+  },
+
   props: {
     currentPage: {
       required: true,
@@ -57,11 +59,30 @@ export default defineComponent({
       required: true,
       type: Number,
     },
+    startItem: {
+      required: true,
+      type: Number,
+    },
+    endItem: {
+      required: true,
+      type: Number,
+    },
+    totalItems: {
+      required: true,
+      type: Number,
+    },
   },
 
   emits: ['goToPage'],
 
   computed: {
+    pageArray(): SelectBoxOption[] {
+      return Array.from(Array(this.numberOfPages)).map((a, index: number) => ({
+        key: index + 1,
+        value: `Page ${(index + 1).toString()} of ${this.numberOfPages}`,
+      }));
+    },
+
     canGoBack(): boolean {
       return this.currentPage > 1;
     },
@@ -69,43 +90,14 @@ export default defineComponent({
     canGoForward(): boolean {
       return this.currentPage < this.numberOfPages;
     },
-
-    paginationGroups(): number[][] {
-      const numberOfGroups = [...Array(Math.ceil(this.numberOfPages / 5))];
-      const pagesInGroup = [...Array(5)];
-
-      return numberOfGroups.map((gItem, group) => pagesInGroup.map((pItem, page) => page + (group * 5) + 1));
-    },
-
-    pageArray(): PaginationData {
-      const data: PaginationData = [{ label: '1', goTo: 1 }];
-
-      const groups: number[][] = this.paginationGroups;
-
-      if (this.currentPage > 5) {
-        data.push({ label: '...', goTo: this.currentPage - 5 });
-      }
-
-      const currentGroup = groups.findIndex((page) => page.indexOf(this.currentPage) !== -1);
-
-      groups[currentGroup].forEach((page) => {
-        if (page > 1 && page < this.numberOfPages) {
-          data.push({ label: page.toString(), goTo: page });
-        }
-      });
-
-      if (currentGroup + 1 < groups.length) {
-        data.push({ label: '...', goTo: groups[currentGroup + 1][0] });
-      }
-
-      data.push({ label: this.numberOfPages.toString(), goTo: this.numberOfPages });
-
-      return data;
-    },
   },
 
   methods: {
     goTo(page: number) {
+      if (page === this.currentPage) {
+        return;
+      }
+
       this.$emit('goToPage', page);
     },
   },

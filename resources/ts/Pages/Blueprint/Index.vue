@@ -16,7 +16,17 @@
   </div>
 
   <CardSkeleton>
-    <div class="flex flex-col space-y-5 justify-between items-center overflow-hidden">
+    <div class="flex flex-col justify-between items-center overflow-hidden">
+      <div class="w-full flex justify-end items-center p-2 pb-0 xl:p-4">
+        <template v-if="metas.availableFilters">
+          <FilterSidebar
+            :filters="metas.availableFilters"
+            :current-filters="currentFilters"
+            @filters-updated="filtersUpdated"
+          />
+        </template>
+      </div>
+
       <div class="w-full">
         <TableWrapper>
           <template #header>
@@ -67,13 +77,14 @@
         </TableWrapper>
       </div>
 
-      <div class="w-full pb-3">
-        <Paginator
-          :current-page="data.currentPage"
-          :number-of-pages="data.numberOfPages"
-          @go-to-page="goToPage"
-        />
-      </div>
+      <Paginator
+        :current-page="data.currentPage"
+        :number-of-pages="data.numberOfPages"
+        :start-item="data.start"
+        :end-item="data.end"
+        :total-items="data.totalItems"
+        @go-to-page="goToPage"
+      />
     </div>
   </CardSkeleton>
 </template>
@@ -83,6 +94,7 @@ import { defineComponent } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import Architect from '../../Layouts/Architect.vue';
 import {
+  BlueprintFilter,
   BlueprintTableButtonEvent,
   BlueprintTableDataSet,
   BlueprintTableMetaSet,
@@ -100,9 +112,11 @@ import TableCell from '../../Components/Table/TableCell.vue';
 import TableButtons from '../../Components/Blueprints/TableButtons.vue';
 import CardSkeleton from '../../Components/CardSkeleton.vue';
 import FormButton from '../../Components/Forms/FormButton.vue';
+import FilterSidebar from '../../Components/Blueprints/FilterSidebar.vue';
 
 export default defineComponent({
   components: {
+    FilterSidebar,
     CardSkeleton,
     TableButtons,
     TableCell,
@@ -131,6 +145,11 @@ export default defineComponent({
       required: true,
       type: Object as () => BlueprintTableSortableDataSet,
     },
+    currentFilters: {
+      required: false,
+      type: Array as () => BlueprintFilter[],
+      default: () => [],
+    },
   },
 
   data: (): { queryStringParameters: BlueprintTableQueryStringParameters } => ({
@@ -146,21 +165,59 @@ export default defineComponent({
       page: this.data.currentPage,
       sortItem: this.currentSort.column,
       sortDirection: this.currentSort.direction,
+      filter: [],
     };
+
+    if (this.currentFilters) {
+      this.currentFilters.forEach((filter: BlueprintFilter) => {
+        this.queryStringParameters.filter?.push(filter);
+      });
+    }
   },
 
   methods: {
+    processQueryStrings(): { [T: string]: string | number } {
+      const parameters: { [T: string]: any } = this.queryStringParameters;
+
+      if (parameters.filter?.length) {
+        parameters.filter
+          .filter((filter: BlueprintFilter) => filter.filters.length > 0)
+          .forEach((filter: BlueprintFilter) => {
+            parameters[`filter[${filter.key}]`] = filter.filters.join(',');
+          });
+
+        delete parameters.filter;
+      }
+
+      return parameters;
+    },
+
+    rerenderPage() {
+      Inertia.get(window.location.pathname, this.processQueryStrings(), { only: ['data', 'currentSort'], preserveScroll: true });
+    },
+
     goToPage(page: number) {
       this.queryStringParameters.page = page;
 
-      Inertia.get(window.location.pathname, this.queryStringParameters, { only: ['data', 'currentSort'], preserveScroll: true });
+      this.rerenderPage();
     },
 
     sortChange(sortable: BlueprintTableSortableDataSet) {
       this.queryStringParameters.sortItem = sortable.column;
       this.queryStringParameters.sortDirection = sortable.direction;
 
-      Inertia.get(window.location.pathname, this.queryStringParameters, { only: ['data', 'currentSort'], preserveScroll: true });
+      this.rerenderPage();
+    },
+
+    filtersUpdated(filters: BlueprintFilter[]) {
+      this.queryStringParameters.page = 1;
+      this.queryStringParameters.filter = [];
+
+      filters.forEach((filter: BlueprintFilter) => {
+        this.queryStringParameters.filter?.push(filter);
+      });
+
+      this.rerenderPage();
     },
 
     buttonPressed(button: BlueprintTableButtonEvent, id: number | string) {
@@ -170,6 +227,7 @@ export default defineComponent({
         safeId = id.toString(10);
       }
 
+      // eslint-disable-next-line default-case
       switch (button) {
         case 'edit':
           return Inertia.get(`${window.location.pathname}/${safeId}`);

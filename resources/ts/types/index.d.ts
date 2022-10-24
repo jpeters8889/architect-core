@@ -26,6 +26,13 @@ export type NavigationChild = {
 export type BlueprintMetaSet = {
   title: string;
   singularTitle: string;
+  availableFilters?: BlueprintFilterSetting[];
+};
+
+export type BlueprintFilterSetting = {
+  key: string,
+  label: string,
+  options: string[],
 };
 
 export type BlueprintTableMetaSet = BlueprintMetaSet & {
@@ -42,6 +49,9 @@ export type BlueprintTableDataSet = {
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   numberOfPages: number;
+  start: number,
+  end: number,
+  totalItems: number,
   items: {
     $meta: BlueprintTableButtonSettings;
     [K: string]: any
@@ -66,6 +76,7 @@ export type BlueprintTableQueryStringParameters = {
   page: number,
   sortItem: string,
   sortDirection: 'asc' | 'desc',
+  filter?: BlueprintFilter[],
 };
 
 export type BlueprintTableButtonEvent = 'delete' | 'restore' | 'edit' | 'open' | 'duplicate';
@@ -80,6 +91,10 @@ export type BlueprintFormField = {
   value?: string | number | boolean,
 };
 
+export type BlueprintFilter = { key: string, filters: string[] };
+
 export type PaginationData = { label: string, goTo: number }[];
+
+export type PaginationSelectOptions = { page: number, label: string };
 
 export type SelectBoxOption = { key: string | number | boolean, value: string };

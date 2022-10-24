@@ -8,7 +8,8 @@
 </template>
 
 <script>
-import { CheckCircleIcon, XCircleIcon } from '@heroicons/vue/outline';
+
+import { CheckCircleIcon, XCircleIcon } from '@heroicons/vue/24/outline';
 
 export default {
   components: { CheckCircleIcon, XCircleIcon },

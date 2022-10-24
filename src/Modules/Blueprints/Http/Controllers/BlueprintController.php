@@ -27,6 +27,15 @@ class BlueprintController
                 'column' => $request->get('sortItem', $listService->blueprint()->orderBy()[0]),
                 'direction' => $request->get('sortDirection', $listService->blueprint()->orderBy()[1]),
             ],
+            'currentFilters' => collect($listService->blueprint()->availableFilters())
+                ->map(fn(array $filter) => ['key' => $filter['key'], 'filters' => $request->input("filter.{$filter['key']}")])
+//                ->filter(fn(array $filter) => $filter['filters'] !== null)
+                ->transform(function (array $filter) {
+                    $filter['filters'] = explode(',', $filter['filters']);
+
+                    return $filter;
+                })
+                ->values(),
         ]);
     }
 

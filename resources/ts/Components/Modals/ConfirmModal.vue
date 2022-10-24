@@ -5,7 +5,7 @@
     @close="cancel"
   >
     <template #icon>
-      <ExclamationIcon class="h-6 w-6 text-red-600" />
+      <ExclamationTriangleIcon class="h-6 w-6 text-red-600" />
     </template>
 
     <slot />
@@ -28,12 +28,12 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { ExclamationIcon } from '@heroicons/vue/outline';
+import { ExclamationTriangleIcon } from '@heroicons/vue/24/outline';
 import FormButton from '../Forms/FormButton.vue';
 import Modal from '../Modal.vue';
 
 export default defineComponent({
-  components: { Modal, FormButton, ExclamationIcon },
+  components: { Modal, FormButton, ExclamationTriangleIcon },
 
   props: {
     title: {
