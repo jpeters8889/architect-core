@@ -135,21 +135,19 @@ abstract class AbstractBlueprint implements Registerable
         //
     }
 
-    /** @phpstan-return array<array{key: string, label: string, options: string}> */
+    /** @return array<array{key: string, label: string, options: array<string>}> */
     public function availableFilters(): array
     {
-        /** @var callable(AbstractField): array{key: string, label: string, options: string} $callback */
-        $callback = function (AbstractField $field): array {
-            return [
-                'key' => $field->column(),
-                'label' => $field->label(),
-                'options' => $field->filterKeys(),
-            ];
-        };
-
         return collect($this->fields())
             ->filter(fn (AbstractField $field) => $field->isFilterable())
-            ->map($callback)
+            ->values()
+            ->map(function (AbstractField $field): array {
+                return [
+                    'key' => $field->column(),
+                    'label' => $field->label(),
+                    'options' => $field->filterKeys(),
+                ];
+            })
             ->all();
     }
 

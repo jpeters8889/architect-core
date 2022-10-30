@@ -129,7 +129,7 @@ class ListService extends BlueprintDisplayService
         return $this->currentSorting;
     }
 
-    /** @return array{search: string, sort: array{column: string, direction: string}, filters: Collection<int, array{key: string, filters: string[]}>} */
+    /** @return array{search: string, sort: array{column: string, direction: string}, filters: array<array{key: string, filters: array<string>}>} */
     public function currentRequestValues(Request $request): array
     {
         /** @var string $search */
@@ -157,22 +157,19 @@ class ListService extends BlueprintDisplayService
         ];
     }
 
-    /** @return array{key: string, filters: array<string>} */
+    /** @return array<array{key: string, filters: array<string>}> */
     protected function currentFilters(Request $request): array
     {
-        /** @var callable(array{key: string, label: string, options: string}): array{key: string, filters: array<string>} $map */
-        $map = function (array $filter) use ($request) {
-            /** @var string $filters */
-            $filters = $request->input("filter.{$filter['key']}");
+        return collect(collect($this->blueprint->availableFilters()))
+            ->transform(function (array $filter) use ($request) {
+                /** @var string $filters */
+                $filters = $request->input("filter.{$filter['key']}");
 
-            return [
-                'key' => $filter['key'],
-                'filters' => explode(',', $filters),
-            ];
-        };
-
-        return collect($this->blueprint()->availableFilters())
-            ->transform($map)
+                return [
+                    'key' => $filter['key'],
+                    'filters' => explode(',', $filters),
+                ];
+            })
             ->all();
     }
 }
