@@ -34,19 +34,19 @@ abstract class BlueprintDisplayService
     /** @return Collection<int, string> */
     public function headers(): Collection
     {
-        return $this->fields->map(fn(AbstractField $field) => $field->label());
+        return $this->fields->map(fn (AbstractField $field) => $field->label());
     }
 
     /** @return Collection<int, string> */
     public function columns(): Collection
     {
-        return $this->fields->map(fn(AbstractField $field) => $field->column());
+        return $this->fields->map(fn (AbstractField $field) => $field->column());
     }
 
     /** @return Collection<int, string> */
     public function components(): Collection
     {
-        return $this->fields->map(fn(AbstractField $field) => $field->component());
+        return $this->fields->map(fn (AbstractField $field) => $field->component());
     }
 
     public function blueprint(): AbstractBlueprint
@@ -60,6 +60,7 @@ abstract class BlueprintDisplayService
             'title' => $this->blueprint()->label(),
             'singularTitle' => Str::singular($this->blueprint()->label()),
             'availableFilters' => $this->blueprint->availableFilters(),
+            'searchable' => $this->blueprint->isSearchable(),
             ...$this->additionalMetas(),
         ];
     }

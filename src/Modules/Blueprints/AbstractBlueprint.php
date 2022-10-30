@@ -83,14 +83,14 @@ abstract class AbstractBlueprint implements Registerable
     public function resolveFieldFromColumn(string $column): ?AbstractField
     {
         return collect($this->fields())
-            ->filter(fn(AbstractField $field) => $field->column() === $column)
+            ->filter(fn (AbstractField $field) => $field->column() === $column)
             ->first();
     }
 
     public function resolveFieldFromLabel(string $label): ?AbstractField
     {
         return collect($this->fields())
-            ->filter(fn(AbstractField $field) => $field->label() === $label)
+            ->filter(fn (AbstractField $field) => $field->label() === $label)
             ->first();
     }
 
@@ -135,16 +135,37 @@ abstract class AbstractBlueprint implements Registerable
         //
     }
 
+    /** @phpstan-return array<array{key: string, label: string, options: string}> */
     public function availableFilters(): array
     {
-        return collect($this->fields())
-            ->filter(fn(AbstractField $field) => $field->isFilterable())
-            ->map(fn(AbstractField $field) => [
+        /** @var callable(AbstractField): array{key: string, label: string, options: string} $callback */
+        $callback = function (AbstractField $field): array {
+            return [
                 'key' => $field->column(),
                 'label' => $field->label(),
-                'options' => $field->filterKeys()
-            ])
-            ->values()
-            ->toArray();
+                'options' => $field->filterKeys(),
+            ];
+        };
+
+        return collect($this->fields())
+            ->filter(fn (AbstractField $field) => $field->isFilterable())
+            ->map($callback)
+            ->all();
+    }
+
+    public function isSearchable(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @param Builder<Model> $builder
+     * @param string $term
+     */
+    public function searchFor(Builder $builder, string $term): void
+    {
+        foreach ($this->fields() as $field) {
+            $builder->where($field->column(), 'like', "%{$term}");
+        }
     }
 }

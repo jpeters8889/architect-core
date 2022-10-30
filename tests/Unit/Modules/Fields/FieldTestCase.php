@@ -51,7 +51,7 @@ abstract class FieldTestCase extends TestCase
     {
         $user = UserFactory::new()->create(['username' => 'FooBar']);
         $field = $this->makeField('username')
-            ->getValueForTableUsing(fn(Model $model) => "{$model->username} Appended");
+            ->getValueForTableUsing(fn (Model $model) => "{$model->username} Appended");
 
         $this->assertEquals('FooBar Appended', $field->getCurrentValueForTable($user));
     }
@@ -70,7 +70,7 @@ abstract class FieldTestCase extends TestCase
     {
         $user = UserFactory::new()->create(['username' => 'FooBar']);
         $field = $this->makeField('username')
-            ->getValueForFormsUsing(fn(Model $model) => "{$model->username} Appended");
+            ->getValueForFormsUsing(fn (Model $model) => "{$model->username} Appended");
 
         $this->assertEquals('FooBar Appended', $field->getCurrentValueForForm($user));
     }
@@ -140,7 +140,7 @@ abstract class FieldTestCase extends TestCase
     public function itKnowsWhetherTheFieldCanBeUsedForFiltering(): void
     {
         $notFilterableField = $this->makeField('username');
-        $filterableField = $this->makeField('active')->filterUsing([], fn() => true);
+        $filterableField = $this->makeField('active')->filterUsing([], fn () => true);
 
         $this->assertFalse($notFilterableField->isFilterable());
         $this->assertTrue($filterableField->isFilterable());
@@ -149,7 +149,7 @@ abstract class FieldTestCase extends TestCase
     /** @test */
     public function itReturnsTheFilterableKeys(): void
     {
-        $field = $this->makeField('active')->filterUsing(['First', 'Second'], fn() => true);
+        $field = $this->makeField('active')->filterUsing(['First', 'Second'], fn () => true);
 
         $this->assertIsArray($field->filterKeys());
         $this->assertEquals(['First', 'Second'], $field->filterKeys());
@@ -160,7 +160,7 @@ abstract class FieldTestCase extends TestCase
     {
         $field = $this->makeField('active')->filterUsing(
             ['First', 'Second'],
-            fn(Builder $builder, $values) => $builder->whereIn('active', $values)
+            fn (Builder $builder, $values) => $builder->whereIn('active', $values)
         );
 
         $builder = User::query();
@@ -170,5 +170,47 @@ abstract class FieldTestCase extends TestCase
         $field->filter($builder, ['First']);
 
         $this->assertCount(1, $builder->toBase()->wheres);
+    }
+
+    /** @test */
+    public function itCanBeSearched(): void
+    {
+        $field = $this->makeField('username');
+        $builder = User::query();
+
+        $this->assertEmpty($builder->toBase()->wheres);
+
+        $field->searchFor($builder, 'foo');
+
+        $this->assertNotEmpty($builder->toBase()->wheres);
+    }
+
+    /** @test */
+    public function itCanBeSearchedWithTheDefaultClosure(): void
+    {
+        $field = $this->makeField('username');
+        $builder = User::query();
+        $field->searchFor($builder, 'foo');
+
+        $firstWhere = $builder->toBase()->wheres[0];
+
+        $this->assertEquals('username', $firstWhere['column']);
+        $this->assertEquals('like', $firstWhere['operator']);
+        $this->assertEquals('%foo%', $firstWhere['value']);
+    }
+
+    /** @test */
+    public function itCanBeSearchedWithACustomClosure(): void
+    {
+        $field = $this->makeField('username');
+        $builder = User::query();
+        $field->searchUsing(fn (Builder $builder, string $term) => $builder->where('username', $term))
+            ->searchFor($builder, 'foo');
+
+        $firstWhere = $builder->toBase()->wheres[0];
+
+        $this->assertEquals('username', $firstWhere['column']);
+        $this->assertEquals('=', $firstWhere['operator']);
+        $this->assertEquals('foo', $firstWhere['value']);
     }
 }

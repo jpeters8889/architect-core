@@ -125,7 +125,23 @@ class BlueprintTest extends TestCase
             $this->assertArrayHasKey('options', $filter);
             $this->assertIsArray($filter['options']);
         }
+    }
 
+    /** @test */
+    public function itKnowsIfItIsSearchable(): void
+    {
+        $this->assertIsBool($this->blueprint->isSearchable());
+    }
 
+    /** @test */
+    public function itCanHandleASearch(): void
+    {
+        $builder = $this->blueprint->query();
+
+        $this->assertEmpty($builder->toBase()->wheres);
+
+        $this->blueprint->searchFor($builder, 'foobar');
+
+        $this->assertNotEmpty($builder->toBase()->wheres);
     }
 }

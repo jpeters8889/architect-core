@@ -4,6 +4,8 @@ namespace Jpeters8889\Architect\Modules\Blueprints\Services;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Jpeters8889\Architect\Modules\Blueprints\DTO\ListServiceLoader;
 use Jpeters8889\Architect\Modules\Blueprints\Paginator;
@@ -23,7 +25,7 @@ class ListService extends BlueprintDisplayService
      */
     protected function transformFields(Collection $fields): Collection
     {
-        return $fields->filter(fn(AbstractField $field) => $field->shouldDisplayOnTable());
+        return $fields->filter(fn (AbstractField $field) => $field->shouldDisplayOnTable());
     }
 
     public function paginator(): LengthAwarePaginator
@@ -31,10 +33,9 @@ class ListService extends BlueprintDisplayService
         return $this->paginator;
     }
 
-    /** @param array{string, 'asc' | 'desc'} | null $sorting */
     public function load(ListServiceLoader $loader): self
     {
-        if (!$loader->sorting) {
+        if (! $loader->sorting) {
             $loader->sorting = $this->blueprint->orderBy();
         }
 
@@ -42,13 +43,15 @@ class ListService extends BlueprintDisplayService
 
         $this->applyFilters($baseQuery, $loader->filter);
 
-        $this->paginator = $baseQuery
+        $baseQuery
             ->orderBy(...$loader->sorting)
-            ->paginate(
-                $this->blueprint->perPage(),
-                [$this->blueprint->modelKey()],
-                page: $loader->page
-            );
+            ->when($loader->hasSearch(), fn (Builder $builder) => $this->applySearch($builder, (string)$loader->search));
+
+        $this->paginator = $baseQuery->paginate(
+            $this->blueprint->perPage(),
+            [$this->blueprint->modelKey()],
+            page: $loader->page
+        );
 
         $this->currentPage = $loader->page ?: 1;
 
@@ -57,9 +60,25 @@ class ListService extends BlueprintDisplayService
         return $this;
     }
 
+    /**
+     * @param Builder<Model> $builder
+     * @return Builder<Model>
+     */
+    protected function applySearch(Builder $builder, string $term): Builder
+    {
+        foreach ($this->blueprint()->fields() as $field) {
+            $builder = $field->searchFor($builder, $term);
+        }
+
+        return $builder;
+    }
+
+    /**
+     * @param Builder<Model> $builder
+     */
     protected function applyFilters(Builder $builder, ?array $filters): void
     {
-        if (!$filters) {
+        if (! $filters) {
             return;
         }
 
@@ -78,7 +97,7 @@ class ListService extends BlueprintDisplayService
         $components = $this->components()->toArray();
 
         return [
-            'headers' => $this->headers()->map(fn(string $header, int $index) => [
+            'headers' => $this->headers()->map(fn (string $header, int $index) => [
                 'label' => $header,
                 'column' => $columns[$index],
                 'component' => $components[$index],
@@ -108,5 +127,52 @@ class ListService extends BlueprintDisplayService
     public function sortBy(): array
     {
         return $this->currentSorting;
+    }
+
+    /** @return array{search: string, sort: array{column: string, direction: string}, filters: Collection<int, array{key: string, filters: string[]}>} */
+    public function currentRequestValues(Request $request): array
+    {
+        /** @var string $search */
+        $search = $request->get('search', '');
+
+        return [
+            'search' => $search,
+            'sort' => $this->currentSorting($request),
+            'filters' => $this->currentFilters($request),
+        ];
+    }
+
+    /** @return array{column: string, direction: string} */
+    protected function currentSorting(Request $request): array
+    {
+        /** @var string $column */
+        $column = $request->get('sortItem', $this->blueprint()->orderBy()[0]);
+
+        /** @var string $direction */
+        $direction = $request->get('sortDirection', $this->blueprint()->orderBy()[1]);
+
+        return [
+            'column' => $column,
+            'direction' => $direction,
+        ];
+    }
+
+    /** @return array{key: string, filters: array<string>} */
+    protected function currentFilters(Request $request): array
+    {
+        /** @var callable(array{key: string, label: string, options: string}): array{key: string, filters: array<string>} $map */
+        $map = function (array $filter) use ($request) {
+            /** @var string $filters */
+            $filters = $request->input("filter.{$filter['key']}");
+
+            return [
+                'key' => $filter['key'],
+                'filters' => explode(',', $filters),
+            ];
+        };
+
+        return collect($this->blueprint()->availableFilters())
+            ->transform($map)
+            ->all();
     }
 }

@@ -31,9 +31,13 @@ abstract class AbstractField
 
     protected ?Closure $filterUsing = null;
 
+    protected bool $searchable = true;
+
+    protected ?Closure $searchUsing = null;
+
     final public function __construct(protected string $column, string $label = null)
     {
-        if (!$label) {
+        if (! $label) {
             $label = Str::of($this->column)->headline()->toString();
         }
 
@@ -171,7 +175,6 @@ abstract class AbstractField
         return $this;
     }
 
-
     public function isFilterable(): bool
     {
         return $this->filterUsing !== null;
@@ -185,29 +188,64 @@ abstract class AbstractField
 
     /**
      * @param string[] $possibleFilters
-     * @phpstan-param Closure(Builder $builder, array $values): mixed $filter
+     * @phpstan-param Closure(Builder<Model> $builder, array $values): mixed $filter
      */
     public function filterUsing(array $possibleFilters, Closure $filter = null): static
     {
-        if (!$filter) {
-            $filter = fn(Builder $builder, array $values) => $builder->whereIn($this->column, $values);
+        if (! $filter) {
+            $filter = fn (Builder $builder, array $values) => $builder->whereIn($this->column, $values);
         }
-        
+
         $this->possibleFilters = $possibleFilters;
         $this->filterUsing = $filter;
 
         return $this;
     }
 
+    /**
+     * @param string[] $values
+     * @param Builder<Model> $builder $builder
+     * @return Builder<Model>
+     */
     public function filter(Builder $builder, array $values): Builder
     {
-        if (!$this->isFilterable()) {
+        if (! $this->filterUsing || ! $this->isFilterable()) {
             return $builder;
         }
 
         call_user_func($this->filterUsing, $builder, $values);
 
         return $builder;
+    }
+
+    /**
+     * @phpstan-param Closure(Builder<Model> $builder, string $term): mixed $closure
+     */
+    public function searchUsing(Closure $closure): static
+    {
+        $this->searchUsing = $closure;
+
+        return $this;
+    }
+
+    /**
+     * @param Builder<Model> $builder
+     * @param string $term
+     * @return Builder<Model>
+     */
+    public function searchFor(Builder $builder, string $term): Builder
+    {
+        if (! $this->searchable) {
+            return $builder;
+        }
+
+        if ($this->searchUsing) {
+            call_user_func($this->searchUsing, $builder, $term);
+
+            return $builder;
+        }
+
+        return $builder->orWhere($this->column(), 'like', "%{$term}%");
     }
 
     public function required(): static
@@ -244,5 +282,12 @@ abstract class AbstractField
     public function metaData(): array
     {
         return [];
+    }
+
+    public function dontSearch(): static
+    {
+        $this->searchable = false;
+
+        return $this;
     }
 }

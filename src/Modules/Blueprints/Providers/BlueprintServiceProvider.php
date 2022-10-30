@@ -141,7 +141,7 @@ class BlueprintServiceProvider extends ServiceProvider
     {
         $blueprint = Route::current()?->parameter('blueprint');
 
-        throw_if(!$blueprint, new BindingResolutionException('Can only bind when using a Blueprint'));
+        throw_if(! $blueprint, new BindingResolutionException('Can only bind when using a Blueprint'));
 
         return resolve(BlueprintRegistrar::class)->resolveFromSlug((string)$blueprint);
     }

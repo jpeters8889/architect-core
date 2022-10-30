@@ -27,6 +27,7 @@ export type BlueprintMetaSet = {
   title: string;
   singularTitle: string;
   availableFilters?: BlueprintFilterSetting[];
+  searchable?: boolean;
 };
 
 export type BlueprintFilterSetting = {
@@ -72,11 +73,18 @@ export type BlueprintTableSortableDataSet = {
   direction: 'asc' | 'desc',
 };
 
+export type BlueprintListCurrentValueDataSet = {
+  search: '',
+  sort: BlueprintTableSortableDataSet,
+  filters: BlueprintFilter[],
+};
+
 export type BlueprintTableQueryStringParameters = {
   page: number,
   sortItem: string,
   sortDirection: 'asc' | 'desc',
   filter?: BlueprintFilter[],
+  search?: string,
 };
 
 export type BlueprintTableButtonEvent = 'delete' | 'restore' | 'edit' | 'open' | 'duplicate';

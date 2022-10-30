@@ -140,6 +140,24 @@ class ListServiceTest extends TestCase
     }
 
     /** @test */
+    public function itReturnsTheAvailableFiltersInTheMetas(): void
+    {
+        $metas = $this->listService->metas();
+
+        $this->assertArrayHasKey('availableFilters', $metas);
+        $this->assertEquals($this->listService->blueprint()->availableFilters(), $metas['availableFilters']);
+    }
+
+    /** @test */
+    public function itReturnsIsSearchableInTheMetas(): void
+    {
+        $metas = $this->listService->metas();
+
+        $this->assertArrayHasKey('searchable', $metas);
+        $this->assertEquals($this->listService->blueprint()->isSearchable(), $metas['searchable']);
+    }
+
+    /** @test */
     public function itCanReturnAFormattedDataProperty(): void
     {
         UserFactory::new()->create();
@@ -220,7 +238,7 @@ class ListServiceTest extends TestCase
         $this->listService->load(new ListServiceLoader());
         $items = $this->listService->data()['items'];
 
-        $this->listService->columns()->each(fn(string $column) => $this->assertArrayHasKey($column, $items[0]));
+        $this->listService->columns()->each(fn (string $column) => $this->assertArrayHasKey($column, $items[0]));
     }
 
     /** @test */
@@ -298,10 +316,28 @@ class ListServiceTest extends TestCase
 
         $this->assertEquals(2, $multipleResults['totalItems']);
 
-        $results = $multipleResults['items']->map(fn(Collection $item) => $item->get('username'));
+        $results = $multipleResults['items']->map(fn (Collection $item) => $item->get('username'));
 
         $this->assertContains('NormalMember', $results);
         $this->assertContains('AdminMember', $results);
         $this->assertNotContains('PrivilegedMember', $results);
+    }
+
+    /** @test */
+    public function itSearchesForItemsUsingTheGivenSearchParameter(): void
+    {
+        UserFactory::new()->create(['username' => 'Foo']);
+        UserFactory::new()->create(['username' => 'Bar']);
+        UserFactory::new()->create(['username' => 'FooBar']);
+
+        $results = $this->listService->load(new ListServiceLoader(search: 'foo'))->data();
+
+        $this->assertEquals(2, $results['totalItems']);
+
+        $usernames = $results['items']->map(fn (Collection $item) => $item->get('username'));
+
+        $this->assertContains('Foo', $usernames);
+        $this->assertContains('FooBar', $usernames);
+        $this->assertNotContains('Bar', $usernames);
     }
 }
